@@ -6,13 +6,20 @@ const IndustriesServed = () => {
   const [slidesToShow, setSlidesToShow] = useState(3);
 
   const industries = [
+     {
+      title: 'AGRICULTURE',
+      subtitle: 'Farming Equipment',
+      description: 'Robust brass parts for agricultural machinery, irrigation systems, and farming equipment',
+      image: 'https://th.bing.com/th/id/R.d37c0faebca8257dda7aa5863bee21e8?rik=haQw5%2bWJyYAu%2fA&riu=http%3a%2f%2fwww.theneweconomy.com%2fwp-content%2fuploads%2f2015%2f07%2fFarmlink-1.jpg&ehk=W6z0W1CBtBf7jDFP05dOs4KKDhOIWDQn5wrG%2bgjaAOs%3d&risl=&pid=ImgRaw&r=0',
+      products: ['Irrigation Fittings', 'Sprinkler Parts', 'Pump Components', 'Farm Equipment Parts']
+    },
     {
       title: 'ELECTRONICS',
       subtitle: 'Precision Components',
       description: 'High-quality brass terminals, connectors, and electrical components for electronic devices and systems',
       image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80',
       products: ['Electrical Terminals', 'Brass Connectors', 'Switch Parts', 'Cable Glands']
-    },
+    },  
     {
       title: 'CONSTRUCTION',
       subtitle: 'Building Solutions',
@@ -24,21 +31,21 @@ const IndustriesServed = () => {
       title: 'AUTO INDUSTRY',
       subtitle: 'Automotive Excellence',
       description: 'Precision-engineered brass parts for automotive applications, ensuring reliability and performance',
-      image: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=800&q=80',
+      image: 'https://res.cloudinary.com/dhv8cuh62/image/upload/v1759920189/shutterstock_605472758-1200x799_cflqu5.png',
       products: ['Engine Components', 'Fuel System Parts', 'Brake Fittings', 'Custom Auto Parts']
     },
     {
       title: 'PNEUMATIC',
       subtitle: 'Air Systems',
       description: 'Premium brass fittings and components for pneumatic systems and compressed air applications',
-      image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80',
+      image: 'https://res.cloudinary.com/dhv8cuh62/image/upload/v1759920353/r-optisort-w-05_757_583_f5rt2z.jpg',
       products: ['Air Fittings', 'Quick Couplers', 'Pneumatic Valves', 'Compression Fittings']
     },
     {
       title: 'OIL & GAS',
       subtitle: 'Energy Sector',
       description: 'Heavy-duty brass components designed for demanding oil, gas, and petrochemical applications',
-      image: 'https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?w=800&q=80',
+      image: 'https://res.cloudinary.com/dhv8cuh62/image/upload/v1759919301/offshore_platform_qcnlak.jpg',
       products: ['Pressure Fittings', 'Industrial Valves', 'Safety Components', 'Specialized Parts']
     },
     {
@@ -48,18 +55,12 @@ const IndustriesServed = () => {
       image: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800&q=80',
       products: ['Earthing Parts', 'Switchgear Components', 'Power Terminals', 'Cable Accessories']
     },
-    {
-      title: 'AGRICULTURE',
-      subtitle: 'Farming Equipment',
-      description: 'Robust brass parts for agricultural machinery, irrigation systems, and farming equipment',
-      image: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=80',
-      products: ['Irrigation Fittings', 'Sprinkler Parts', 'Pump Components', 'Farm Equipment Parts']
-    },
+   
     {
       title: 'PLUMBING',
       subtitle: 'Sanitary Solutions',
       description: 'Premium brass fittings, valves, and sanitary components for residential and commercial plumbing',
-      image: 'https://images.unsplash.com/photo-1607400201889-565b1ee75f8e?w=800&q=80',
+      image: 'https://res.cloudinary.com/dhv8cuh62/image/upload/v1759920722/plumbing-493595376-2_h5d9v2.jpg',
       products: ['Angel Cocks', 'Brass Valves', 'Faucet Parts', 'Sanitary Fittings']
     }
   ];

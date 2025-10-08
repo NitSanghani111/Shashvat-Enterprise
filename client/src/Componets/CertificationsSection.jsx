@@ -143,35 +143,35 @@ const CertificationsSection = () => {
      
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left - Quality Stats */}
-          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-10 shadow-2xl relative overflow-hidden">
+          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-6 md:p-10 shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500 rounded-full blur-3xl opacity-10"></div>
             <div className="relative">
               <div className="flex items-center gap-3 mb-6">
-                <Sparkles className="w-8 h-8 text-amber-400" />
-                <h3 className="text-2xl font-bold text-white" style={{ fontFamily: "'Inter', 'Roboto', sans-serif" }}>
+                <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-amber-400" />
+                <h3 className="text-xl md:text-2xl font-bold text-white" style={{ fontFamily: "'Inter', 'Roboto', sans-serif" }}>
                   Our Quality Promise
                 </h3>
               </div>
               
-              <div className="grid grid-cols-3 gap-6">
-                <div className="text-center">
-                  <div className="text-5xl font-bold mb-2" style={{ color: '#c5b173', fontFamily: "'Inter', 'Roboto', sans-serif" }}>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-6">
+                <div className="text-center py-4">
+                  <div className="text-4xl md:text-5xl font-bold mb-2" style={{ color: '#c5b173', fontFamily: "'Inter', 'Roboto', sans-serif" }}>
                     100%
                   </div>
                   <div className="text-gray-400 text-sm font-medium" style={{ fontFamily: "'Inter', 'Roboto', sans-serif" }}>
                     Quality Tested
                   </div>
                 </div>
-                <div className="text-center border-x border-gray-700">
-                  <div className="text-5xl font-bold mb-2" style={{ color: '#c5b173', fontFamily: "'Inter', 'Roboto', sans-serif" }}>
+                <div className="text-center py-4 sm:border-x border-gray-700">
+                  <div className="text-4xl md:text-5xl font-bold mb-2" style={{ color: '#c5b173', fontFamily: "'Inter', 'Roboto', sans-serif" }}>
                     500+
                   </div>
                   <div className="text-gray-400 text-sm font-medium" style={{ fontFamily: "'Inter', 'Roboto', sans-serif" }}>
                     Products Range
                   </div>
                 </div>
-                <div className="text-center">
-                  <div className="text-5xl font-bold mb-2" style={{ color: '#c5b173', fontFamily: "'Inter', 'Roboto', sans-serif" }}>
+                <div className="text-center py-4">
+                  <div className="text-4xl md:text-5xl font-bold mb-2" style={{ color: '#c5b173', fontFamily: "'Inter', 'Roboto', sans-serif" }}>
                     6+
                   </div>
                   <div className="text-gray-400 text-sm font-medium" style={{ fontFamily: "'Inter', 'Roboto', sans-serif" }}>
@@ -183,12 +183,12 @@ const CertificationsSection = () => {
           </div>
 
           {/* Right - Quality Features */}
-          <div className="bg-white rounded-3xl p-10 shadow-xl border-2 border-amber-100">
-            <h3 className="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-3" style={{ fontFamily: "'Inter', 'Roboto', sans-serif" }}>
-              <Shield className="w-7 h-7" style={{ color: '#c5b173' }} />
+          <div className="bg-white rounded-3xl p-6 md:p-10 shadow-xl border-2 border-amber-100">
+            <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-6 md:mb-8 flex items-center gap-3" style={{ fontFamily: "'Inter', 'Roboto', sans-serif" }}>
+              <Shield className="w-6 h-6 md:w-7 md:h-7" style={{ color: '#c5b173' }} />
               Why Choose Our Products
             </h3>
-            <div className="space-y-5">
+            <div className="space-y-4 md:space-y-5">
               {[
                 { icon: Star, text: 'Premium grade brass with superior finish and durability' },
                 { icon: CheckCircle, text: 'Rigorous quality checks at every production stage' },
@@ -197,11 +197,11 @@ const CertificationsSection = () => {
               ].map((item, idx) => {
                 const Icon = item.icon;
                 return (
-                  <div key={idx} className="flex items-start gap-4 group">
-                    <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                      <Icon className="w-5 h-5" style={{ color: '#c5b173' }} />
+                  <div key={idx} className="flex items-start gap-3 md:gap-4 group">
+                    <div className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                      <Icon className="w-4 h-4 md:w-5 md:h-5" style={{ color: '#c5b173' }} />
                     </div>
-                    <p className="text-gray-700 font-medium pt-2" style={{ fontFamily: "'Inter', 'Roboto', sans-serif" }}>
+                    <p className="text-sm md:text-base text-gray-700 font-medium pt-1 md:pt-2" style={{ fontFamily: "'Inter', 'Roboto', sans-serif" }}>
                       {item.text}
                     </p>
                   </div>
@@ -211,27 +211,27 @@ const CertificationsSection = () => {
           </div>
         </div>
 
-        <div className="mt-16 bg-gradient-to-r from-amber-100 via-amber-50 to-amber-100 rounded-3xl p-8 md:p-12 border-2 border-amber-200 shadow-xl">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="flex items-center gap-6">
-              <div className="w-20 h-20 rounded-2xl bg-white flex items-center justify-center shadow-lg">
-                <Award className="w-10 h-10" style={{ color: '#c5b173' }} />
+        <div className="mt-12 md:mt-16 bg-gradient-to-r from-amber-100 via-amber-50 to-amber-100 rounded-2xl md:rounded-3xl p-6 md:p-12 border-2 border-amber-200 shadow-xl">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 md:gap-6 text-center sm:text-left">
+              <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl md:rounded-2xl bg-white flex items-center justify-center shadow-lg flex-shrink-0">
+                <Award className="w-8 h-8 md:w-10 md:h-10" style={{ color: '#c5b173' }} />
               </div>
               <div>
                 <h4 
-                  className="text-2xl md:text-3xl font-bold text-gray-900 mb-2" 
+                  className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-2" 
                   style={{ fontFamily: "'Inter', 'Roboto', sans-serif" }}
                 >
                   Trusted by Businesses Across India
                 </h4>
-                <p className="text-gray-600 font-medium" style={{ fontFamily: "'Inter', 'Roboto', sans-serif" }}>
+                <p className="text-sm md:text-base text-gray-600 font-medium" style={{ fontFamily: "'Inter', 'Roboto', sans-serif" }}>
                   Delivering excellence since 2019 to Gujarat, Maharashtra, Rajasthan & beyond
                 </p>
               </div>
             </div>
             <a
               href="/contact"
-              className="px-8 py-4 rounded-xl font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-xl whitespace-nowrap"
+              className="px-6 md:px-8 py-3 md:py-4 rounded-lg md:rounded-xl font-bold text-white transition-all duration-300 hover:scale-105 hover:shadow-xl whitespace-nowrap text-sm md:text-base w-full sm:w-auto text-center"
               style={{ backgroundColor: '#c5b173', fontFamily: "'Inter', 'Roboto', sans-serif" }}
             >
               Get Certified Quote

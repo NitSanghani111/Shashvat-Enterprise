@@ -102,7 +102,7 @@ const IndustriesServed = () => {
 
   return (
     <section className="py-20 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
-      <div className="container mx-auto px-4 md:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
         {/* Section Header - Modern & Clean */}
         <div className="text-center mb-16 relative">
           {/* Background Decorative Elements */}
@@ -149,37 +149,37 @@ const IndustriesServed = () => {
         </div>
 
         {/* Carousel Container */}
-        <div className="relative">
-          {/* Navigation Buttons */}
+        <div className="relative px-2 sm:px-0">
+          {/* Navigation Buttons - Hidden on mobile */}
           <button
             onClick={handlePrev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white shadow-xl border-2 border-amber-200 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:bg-amber-50 -ml-6"
+            className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-xl border-2 border-amber-200 items-center justify-center transition-all duration-300 hover:scale-110 hover:bg-amber-50 sm:-ml-6"
             aria-label="Previous"
           >
-            <ChevronLeft className="w-6 h-6" style={{ color: '#c5b173' }} />
+            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: '#c5b173' }} />
           </button>
           
           <button
             onClick={handleNext}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white shadow-xl border-2 border-amber-200 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:bg-amber-50 -mr-6"
+            className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-xl border-2 border-amber-200 items-center justify-center transition-all duration-300 hover:scale-110 hover:bg-amber-50 sm:-mr-6"
             aria-label="Next"
           >
-            <ChevronRight className="w-6 h-6" style={{ color: '#c5b173' }} />
+            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: '#c5b173' }} />
           </button>
 
           {/* Carousel Cards */}
           <div className="overflow-hidden">
             <div 
-              className="flex transition-transform duration-500 ease-out gap-6"
+              className="flex transition-transform duration-500 ease-out gap-3 sm:gap-6"
               style={{ transform: `translateX(-${currentIndex * (100 / slidesToShow)}%)` }}
             >
               {industries.map((industry, index) => (
                 <div
                   key={index}
                   className="flex-shrink-0 group"
-                  style={{ width: `calc(${100 / slidesToShow}% - ${(slidesToShow - 1) * 24 / slidesToShow}px)` }}
+                  style={{ width: slidesToShow === 1 ? 'calc(100% - 0px)' : `calc(${100 / slidesToShow}% - ${(slidesToShow - 1) * 24 / slidesToShow}px)` }}
                 >
-                  <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border-2 border-gray-100 hover:border-amber-200">
+                  <div className="relative h-[450px] sm:h-[500px] rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border-2 border-gray-100 hover:border-amber-200">
                     {/* Background Image with Overlay */}
                     <div className="absolute inset-0">
                       <img
@@ -195,33 +195,33 @@ const IndustriesServed = () => {
                     </div>
 
                     {/* Content */}
-                    <div className="relative h-full flex flex-col justify-end p-8">
+                    <div className="relative h-full flex flex-col justify-end p-5 sm:p-8">
                       {/* Title Section */}
-                      <div className="mb-4">
-                        <div className="inline-block px-4 py-1 rounded-full mb-3 border-2 border-amber-200" style={{ backgroundColor: 'rgba(197, 177, 115, 0.2)', backdropFilter: 'blur(10px)' }}>
-                          <span className="text-sm font-semibold tracking-wide" style={{ color: '#c5b173', fontFamily: "'Inter', 'Roboto', sans-serif" }}>
+                      <div className="mb-3 sm:mb-4">
+                        <div className="inline-block px-3 sm:px-4 py-1 rounded-full mb-2 sm:mb-3 border-2 border-amber-200" style={{ backgroundColor: 'rgba(197, 177, 115, 0.2)', backdropFilter: 'blur(10px)' }}>
+                          <span className="text-xs sm:text-sm font-semibold tracking-wide" style={{ color: '#c5b173', fontFamily: "'Inter', 'Roboto', sans-serif" }}>
                             {industry.subtitle}
                           </span>
                         </div>
                         <h3 
-                          className="text-3xl md:text-4xl font-bold text-white mb-3 group-hover:text-amber-100 transition-colors duration-300" 
+                          className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 sm:mb-3 group-hover:text-amber-100 transition-colors duration-300" 
                           style={{ fontFamily: "'Inter', 'Roboto', sans-serif", letterSpacing: '0.05em' }}
                         >
                           {industry.title}
                         </h3>
-                        <p className="text-gray-200 text-sm md:text-base leading-relaxed" style={{ fontFamily: "'Inter', 'Roboto', sans-serif" }}>
+                        <p className="text-gray-200 text-xs sm:text-sm md:text-base leading-relaxed" style={{ fontFamily: "'Inter', 'Roboto', sans-serif" }}>
                           {industry.description}
                         </p>
                       </div>
 
-                      {/* Products - Visible on Hover */}
-                      <div className="max-h-0 overflow-hidden group-hover:max-h-40 transition-all duration-500 ease-out">
-                        <div className="pt-4 border-t border-amber-200/30">
-                          <div className="grid grid-cols-2 gap-2">
-                            {industry.products.map((product, idx) => (
+                      {/* Products - Visible on Hover (Hidden on mobile, always shown) */}
+                      <div className="max-h-32 sm:max-h-0 overflow-hidden sm:group-hover:max-h-40 transition-all duration-500 ease-out">
+                        <div className="pt-3 sm:pt-4 border-t border-amber-200/30">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2">
+                            {industry.products.slice(0, 4).map((product, idx) => (
                               <div key={idx} className="flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#c5b173' }}></div>
-                                <span className="text-xs text-gray-200 font-medium" style={{ fontFamily: "'Inter', 'Roboto', sans-serif" }}>
+                                <div className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: '#c5b173' }}></div>
+                                <span className="text-xs text-gray-200 font-medium truncate" style={{ fontFamily: "'Inter', 'Roboto', sans-serif" }}>
                                   {product}
                                 </span>
                               </div>
@@ -231,14 +231,14 @@ const IndustriesServed = () => {
                       </div>
 
                       {/* Learn More Link */}
-                      <div className="mt-6 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0">
+                      <div className="mt-4 sm:mt-6 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-500 transform translate-y-0 sm:translate-y-2 sm:group-hover:translate-y-0">
                         <a
                           href="/products"
-                          className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-gray-900 transition-all duration-300 hover:gap-3"
+                          className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold text-gray-900 transition-all duration-300 hover:gap-3 text-sm sm:text-base"
                           style={{ backgroundColor: '#c5b173', fontFamily: "'Inter', 'Roboto', sans-serif" }}
                         >
                           Learn More
-                          <ArrowRight className="w-4 h-4" />
+                          <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
                         </a>
                       </div>
                     </div>

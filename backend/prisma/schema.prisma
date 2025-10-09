@@ -98,3 +98,18 @@ model Requests {
   @@index([productId])
 }
 
+model VisitorStats {
+  id            String   @id @default(uuid())
+  sessionId     String   @unique
+  ipAddress     String?
+  userAgent     String?
+  visitDate     DateTime @default(now())
+  lastActivity  DateTime @default(now())
+  pageViews     Int      @default(1)
+  isActive      Boolean  @default(true)
+
+  @@index([visitDate])
+  @@index([isActive])
+  @@index([sessionId])
+}
+

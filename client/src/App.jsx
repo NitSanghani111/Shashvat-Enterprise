@@ -19,6 +19,7 @@ import Loading from "./Componets/Loading";
 import { loadingAtom } from "./Atoms/loadingAtom";
 import { initContentProtection } from "./utils/contentProtection";
 import { isMaintenanceMode, isRouteAllowed } from "./utils/maintenanceMode";
+import { trackVisitor } from "./backend/analytics";
 
 // Protected Route Component - Redirects to Coming Soon if in maintenance mode
 function ProtectedRoute({ children }) {
@@ -46,6 +47,11 @@ function AppContent() {
       addCopyrightToClipboard: true,
     });
   }, []);
+
+  // Track visitor on route change
+  useEffect(() => {
+    trackVisitor();
+  }, [location.pathname]);
 
   // Hide navbar/footer on coming-soon page
   const showNavAndFooter = location.pathname !== '/coming-soon';

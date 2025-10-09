@@ -31,23 +31,23 @@ const ProductDetail = () => {
   useEffect(() => {
     scrollToTop();
     setUp();
-  }, [params, products]);
+  }, [params.id]); // Changed: Only depend on params.id, not entire params or products
 
   const setUp = async () => {
     setIsLoading(true);
+    
+    // Load all products if not already loaded
     if (products === null) {
-      setProducts(await allProduct());
-    }
-
-    let prod = null;
-
-    if (products !== null) {
-      products.map((p) => {
-        if (p.id == params.id) {
-          prod = p;
-        }
-      });
-      setProduct(prod);
+      const fetchedProducts = await allProduct();
+      setProducts(fetchedProducts);
+      
+      // Find the product after fetching
+      const foundProduct = fetchedProducts?.find(p => p.id == params.id);
+      setProduct(foundProduct);
+    } else {
+      // Products already loaded, just find the one we need
+      const foundProduct = products.find(p => p.id == params.id);
+      setProduct(foundProduct);
     }
 
     setIsLoading(false);

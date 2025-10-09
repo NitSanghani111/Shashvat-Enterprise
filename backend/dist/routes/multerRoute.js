@@ -28,7 +28,7 @@ router.post("/upload", upload.any(), (req, res) => {
         return res.status(400).json({ error: "No file uploaded" });
     }
     const file = req.files[0];
-    const imageUrl = `http://localhost:3000/api/v1/multer/image/${file.filename}`;
+    const imageUrl = `https://api.shashvatenterprise.com/api/v1/multer/image/${file.filename}`;
     res.status(200).json({ imageUrl });
 });
 // Serve image by name

@@ -9,6 +9,7 @@ import requirementRoute from './routes/requirementRoute';
 import reviewRoute from './routes/reviewRoute';
 import multerRoute from './routes/multerRoute';
 import categoriesRoute from './routes/categoriesRoute';
+import visitorRoute from './routes/visitorRoute';
 import setupSwagger from './swagger';
 
 
@@ -37,6 +38,7 @@ app.use(api + '/products', productRoute);
 app.use(api + '/requirements', requirementRoute);
 app.use(api + '/reviews', reviewRoute);
 app.use(api + '/categories', categoriesRoute);
+app.use(api + '/visitors', visitorRoute);
 
 // Setup Swagger
 setupSwagger(app);

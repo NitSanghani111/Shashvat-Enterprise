@@ -8,6 +8,7 @@ import { userAtom } from '../../Atoms/userAtom';
 import { allProduct } from '../../backend/manageProduct';
 import { allRequirementRequest } from '../../backend/manageRequrimentOfUser';
 import { getAllReviews } from '../../backend/manageRewiew';
+import { getDetailedAnalytics } from '../../backend/analytics';
 import {
   TrendingUp,
   Package,
@@ -35,6 +36,15 @@ const Dashboard = () => {
   const [requirements, setRequirements] = useRecoilState(clientRequirmentsAtom);
   const [products, setProducts] = useRecoilState(productAtom);
   const user = useRecoilValue(userAtom);
+  
+  // Analytics state
+  const [analytics, setAnalytics] = useState({
+    activeNow: 0,
+    today: { count: 0, growth: '0', isIncrease: true },
+    week: { count: 0, growth: '0', isIncrease: true },
+    month: { count: 0, growth: '0', isIncrease: true },
+    total: 0
+  });
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -54,12 +64,28 @@ const Dashboard = () => {
           const fetchedRequirements = await allRequirementRequest();
           setRequirements(fetchedRequirements);
         }
+        
+        // Load analytics data
+        const analyticsData = await getDetailedAnalytics();
+        if (analyticsData) {
+          setAnalytics(analyticsData);
+        }
       } catch (error) {
         console.error("Error loading dashboard data:", error);
       }
     };
     
     loadDashboardData();
+    
+    // Refresh analytics every 30 seconds
+    const analyticsInterval = setInterval(async () => {
+      const analyticsData = await getDetailedAnalytics();
+      if (analyticsData) {
+        setAnalytics(analyticsData);
+      }
+    }, 30000);
+    
+    return () => clearInterval(analyticsInterval);
   }, []);
 
   // Calculate stats
@@ -111,13 +137,14 @@ const Dashboard = () => {
       link: '/admin/client-requirements'
     },
     {
-      label: 'Active Users',
-      value: '2.4K',
+      label: 'Visitors Today',
+      value: analytics.today.count,
       icon: Users,
       color: '#8b5cf6',
       bgColor: '#8b5cf615',
-      change: '+8.2%',
-      isIncrease: true
+      change: `${analytics.today.isIncrease ? '+' : ''}${analytics.today.growth}%`,
+      isIncrease: analytics.today.isIncrease,
+      subtext: `${analytics.activeNow} active now`
     }
   ];
 
@@ -357,6 +384,114 @@ const Dashboard = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Visitor Analytics Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5, duration: 0.5 }}
+      >
+        <div className="bg-gradient-to-br from-purple-50 via-white to-blue-50 rounded-xl md:rounded-2xl p-4 sm:p-6 md:p-8 shadow-lg border-2" 
+          style={{ borderColor: `${BRAND_COLOR}40` }}>
+          <div className="flex items-center gap-3 mb-4 md:mb-6">
+            <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ background: `${BRAND_COLOR}20` }}>
+              <Eye className="w-4 h-4 md:w-5 md:h-5" style={{ color: BRAND_COLOR }} />
+            </div>
+            <div>
+              <h2 className="text-lg md:text-xl font-bold text-gray-900">Visitor Analytics</h2>
+              <p className="text-xs text-gray-600">Real-time website traffic insights</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+            {/* Active Now */}
+            <div className="relative overflow-hidden bg-white rounded-lg md:rounded-xl p-4 md:p-5 shadow-md hover:shadow-lg transition-all">
+              <div className="absolute top-0 right-0 w-20 h-20 rounded-full blur-2xl opacity-10 bg-green-500" />
+              <div className="relative">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs font-semibold text-gray-600 uppercase">Active Now</p>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                    <span className="text-xs text-green-600 font-bold">LIVE</span>
+                  </div>
+                </div>
+                <p className="text-3xl md:text-4xl font-black text-green-600 mb-1">{analytics.activeNow}</p>
+                <p className="text-xs text-gray-500">Users online</p>
+              </div>
+            </div>
+
+            {/* Today */}
+            <div className="relative overflow-hidden bg-white rounded-lg md:rounded-xl p-4 md:p-5 shadow-md hover:shadow-lg transition-all">
+              <div className="absolute top-0 right-0 w-20 h-20 rounded-full blur-2xl opacity-10" style={{ backgroundColor: BRAND_COLOR }} />
+              <div className="relative">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs font-semibold text-gray-600 uppercase">Today</p>
+                  <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold ${
+                    analytics.today.isIncrease ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                  }`}>
+                    {analytics.today.isIncrease ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
+                    {analytics.today.growth}%
+                  </div>
+                </div>
+                <p className="text-3xl md:text-4xl font-black mb-1" style={{ color: BRAND_COLOR }}>{analytics.today.count}</p>
+                <p className="text-xs text-gray-500">Visitors today</p>
+              </div>
+            </div>
+
+            {/* This Week */}
+            <div className="relative overflow-hidden bg-white rounded-lg md:rounded-xl p-4 md:p-5 shadow-md hover:shadow-lg transition-all">
+              <div className="absolute top-0 right-0 w-20 h-20 rounded-full blur-2xl opacity-10 bg-blue-500" />
+              <div className="relative">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs font-semibold text-gray-600 uppercase">This Week</p>
+                  <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold ${
+                    analytics.week.isIncrease ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                  }`}>
+                    {analytics.week.isIncrease ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
+                    {analytics.week.growth}%
+                  </div>
+                </div>
+                <p className="text-3xl md:text-4xl font-black text-blue-600 mb-1">{analytics.week.count}</p>
+                <p className="text-xs text-gray-500">Last 7 days</p>
+              </div>
+            </div>
+
+            {/* This Month */}
+            <div className="relative overflow-hidden bg-white rounded-lg md:rounded-xl p-4 md:p-5 shadow-md hover:shadow-lg transition-all">
+              <div className="absolute top-0 right-0 w-20 h-20 rounded-full blur-2xl opacity-10 bg-purple-500" />
+              <div className="relative">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs font-semibold text-gray-600 uppercase">This Month</p>
+                  <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold ${
+                    analytics.month.isIncrease ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                  }`}>
+                    {analytics.month.isIncrease ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
+                    {analytics.month.growth}%
+                  </div>
+                </div>
+                <p className="text-3xl md:text-4xl font-black text-purple-600 mb-1">{analytics.month.count}</p>
+                <p className="text-xs text-gray-500">Last 30 days</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Total Visitors */}
+          <div className="mt-4 md:mt-6 p-4 md:p-5 bg-white rounded-lg md:rounded-xl shadow-md border-2" 
+            style={{ borderColor: `${BRAND_COLOR}20` }}>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-gray-600 mb-1">Total Visitors (All Time)</p>
+                <p className="text-2xl md:text-3xl font-black" style={{ color: BRAND_COLOR }}>{analytics.total.toLocaleString()}</p>
+              </div>
+              <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0"
+                style={{ background: `${BRAND_COLOR}15` }}>
+                <Users className="w-6 h-6 md:w-8 md:h-8" style={{ color: BRAND_COLOR }} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
 
       {/* Performance Overview */}
       <motion.div

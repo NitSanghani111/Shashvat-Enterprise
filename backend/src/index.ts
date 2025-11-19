@@ -12,34 +12,27 @@ import categoriesRoute from './routes/categoriesRoute';
 import visitorRoute from './routes/visitorRoute';
 import setupSwagger from './swagger';
 
+
+
 export const prisma = new PrismaClient();
 
 const app = express();
 
-// CORS Configuration
-const corsOptions = {
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:5174',
-    'http://localhost:3000',
-    'http://localhost:3001',
-    'https://api.shashvatenterprise.com',
-    'https://www.shashvatenterprise.com',
-    'https://admin.shashvatenterprise.com'
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token'],
-};
-
-app.use(cors(corsOptions));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(cors());
+
+
 
 // Routers
 const api = '/api/v1';
 
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+
 app.use(api + '/multer', multerRoute);
+
 app.use(api + '/auth', authRoute);
 app.use(api + '/products', productRoute);
 app.use(api + '/requirements', requirementRoute);

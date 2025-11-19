@@ -674,7 +674,11 @@ export default function NavBar({ window: windowProp }) {
             {navItems.map(item => {
               if (item.label === 'Products' && item.hasDropdown) {
                 return (
-                  <Box key={item.label} onMouseLeave={() => setProductMenuOpen(false)}>
+                  <Box 
+                    key={item.label} 
+                    onMouseEnter={() => setProductMenuOpen(true)}
+                    onMouseLeave={() => setProductMenuOpen(false)}
+                  >
                     <Button 
                       ref={productButtonRef} 
                       onMouseEnter={() => setProductMenuOpen(true)} 

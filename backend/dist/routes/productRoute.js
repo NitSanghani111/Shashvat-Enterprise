@@ -88,6 +88,45 @@ router.get('/all', productController_1.getAllProducts);
 router.get('/:id', productController_1.getProductById);
 /**
  * @swagger
+ * /products/by-slug/{category}/{subcategory}/{productName}:
+ *   get:
+ *     summary: Get a product by category, subcategory, and product name
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: category
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The product category (URL slug format)
+ *       - in: path
+ *         name: subcategory
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: The product subcategory (URL slug format)
+ *       - in: path
+ *         name: productName
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The product name (URL slug format)
+ *     responses:
+ *       200:
+ *         description: The product description
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       404:
+ *         description: The product was not found
+ *       500:
+ *         description: Some server error
+ */
+router.get('/by-slug/:category/:subcategory/:productName', productController_1.getProductBySlug);
+router.get('/by-slug/:category/:productName', productController_1.getProductBySlug);
+/**
+ * @swagger
  * /products/delete:
  *   delete:
  *     summary: Delete a product

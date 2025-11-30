@@ -10,12 +10,15 @@ import { allCategoriesAtom } from "../Atoms/categories"
 import { allProduct } from "../backend/manageProduct";
 import { fetchCategories } from "../backend/init";
 import { backendUrl } from "../globle";
+import { generateProductUrl } from "../utils/urlHelpers";
+
 const ProductCard = ({ product, isAdmin, onDelete }) => {
   const navigate = useNavigate()
   const [isHovered, setIsHovered] = useState(false)
 
   const handleProductClick = (productId) => {
-    navigate(`/productdetail/${productId}`)
+    const url = generateProductUrl(product);
+    navigate(url);
   }
 
   return (

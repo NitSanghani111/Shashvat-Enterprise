@@ -78,7 +78,15 @@ function AppContent() {
             <Route path="/catalog" element={<ProtectedRoute><Catalog /></ProtectedRoute>} />
             <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
             <Route path="/products" element={<ProtectedRoute><ProductPage /></ProtectedRoute>} />
+            
+            {/* Product Detail Routes - New SEO-friendly URLs */}
+            <Route path="/product/:category/:subcategory/:productName" element={<ProtectedRoute><Productdetail /></ProtectedRoute>} />
+            <Route path="/product/:category/:productName" element={<ProtectedRoute><Productdetail /></ProtectedRoute>} />
+            
+            {/* Product Detail Routes - Old URL pattern (backward compatibility) */}
             <Route path="/productdetail/:id" element={<ProtectedRoute><Productdetail /></ProtectedRoute>} />
+            
+            {/* Product Category/Subcategory Routes */}
             <Route path="/products/:category" element={<ProtectedRoute><ProductPage /></ProtectedRoute>} />
             <Route path="/products/:category/:subcategory" element={<ProtectedRoute><ProductPage /></ProtectedRoute>} />
             

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { addProduct, getAllProducts, getProductById, deleteProduct, updateProduct } from '../controller/productController';
+import { addProduct, getAllProducts, getProductById, deleteProduct, updateProduct, getProductBySlug } from '../controller/productController';
 import { authTokenMiddleware } from '../middleware/middleware';
 
 const router = Router();
@@ -89,6 +89,46 @@ router.get('/all', getAllProducts);
  *         description: Some server error
  */
 router.get('/:id', getProductById)
+
+/**
+ * @swagger
+ * /products/by-slug/{category}/{subcategory}/{productName}:
+ *   get:
+ *     summary: Get a product by category, subcategory, and product name
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: category
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The product category (URL slug format)
+ *       - in: path
+ *         name: subcategory
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: The product subcategory (URL slug format)
+ *       - in: path
+ *         name: productName
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The product name (URL slug format)
+ *     responses:
+ *       200:
+ *         description: The product description
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       404:
+ *         description: The product was not found
+ *       500:
+ *         description: Some server error
+ */
+router.get('/by-slug/:category/:subcategory/:productName', getProductBySlug)
+router.get('/by-slug/:category/:productName', getProductBySlug)
 
 /**
  * @swagger

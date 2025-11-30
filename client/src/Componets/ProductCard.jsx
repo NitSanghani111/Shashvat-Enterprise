@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Eye, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { generateProductUrl } from "../utils/urlHelpers";
 
 const BRAND_COLOR = '#c5b173';
 
@@ -10,7 +11,8 @@ const ProductCard = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleProductClick = (productId) => {
-    navigate(`/productdetail/${productId}`);
+    const url = generateProductUrl(product);
+    navigate(url);
   };
 
   // Dynamic product specifications

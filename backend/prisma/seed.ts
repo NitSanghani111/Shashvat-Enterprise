@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -37,6 +38,36 @@ async function main() {
   }
 
   console.log('✅ Categories seeded successfully!');
+
+  // Create admin user
+  const adminEmail = 'admin@shashvatenterprise.com';
+  
+  // Check if admin already exists
+  const existingAdmin = await prisma.user.findUnique({
+    where: { email: adminEmail }
+  });
+
+  if (!existingAdmin) {
+    const hashedPassword = await bcrypt.hash('admin123', 10);
+    
+    await prisma.user.create({
+      data: {
+        name: 'Admin User',
+        email: adminEmail,
+        password: hashedPassword,
+        isAdmin: true,
+        address: 'Admin Office',
+        contactNo: '1234567890',
+        whatsAppNo: '1234567890'
+      }
+    });
+
+    console.log('✅ Admin user created successfully!');
+    console.log('   Email: admin@shashvatenterprise.com');
+    console.log('   Password: admin123');
+  } else {
+    console.log('ℹ️  Admin user already exists');
+  }
 }
 
 main()

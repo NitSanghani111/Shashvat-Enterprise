@@ -30,36 +30,33 @@ export async function uploadImageAndGetUrl(imageFile) {
 }
 
 
-export async function updateImage(imageFile) {
-
+export async function updateImage(imageFile, oldImageUrl) {
   try {
-    console.log("imageFile:", imageFile);
+    console.log("Updating image:", imageFile);
     
-    const response = await axios.delete(`${backendUrl}/multer/image/${imageName.name}`);
-    if (response.status === 204) {
-      console.log("Image deleted successfully");
-    } else {
-      console.error("Failed to delete image");
-      return false
+    // Upload new image first
+    const newImageUrl = await uploadImageAndGetUrl(imageFile);
+    if (!newImageUrl) {
+      console.error("Failed to upload new image");
+      return false;
     }
-  } catch (error) {
-    console.error("Image delete error:", error);
-    return false
-  }
-  
-
-  try {
-    const response = await axios.put(`${backendUrl}/multer/upload`, imageFile);
-    if (response.status === 204) {
-      console.log("Image updated successfully");
-      return response.data.imageUrl
-    } else {
-      console.error("Failed to update image");
-      return false
+    
+    // Delete old image if upload was successful and old image exists
+    if (oldImageUrl) {
+      try {
+        const oldImageName = oldImageUrl.split("/").pop();
+        await axios.delete(`${backendUrl}/multer/image/${oldImageName}`);
+        console.log("Old image deleted successfully");
+      } catch (error) {
+        console.warn("Failed to delete old image:", error);
+        // Continue even if delete fails - new image is already uploaded
+      }
     }
+    
+    return newImageUrl;
   } catch (error) {
     console.error("Image update error:", error);
-    return false
+    return false;
   }
 }
 

@@ -9,6 +9,10 @@ const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const router = (0, express_1.Router)();
 const imagesDir = path_1.default.join(__dirname, '../../images');
+// Create images directory if it doesn't exist
+if (!fs_1.default.existsSync(imagesDir)) {
+    fs_1.default.mkdirSync(imagesDir, { recursive: true });
+}
 const storage = multer_1.default.diskStorage({
     destination: (_req, _file, cb) => {
         cb(null, imagesDir);
@@ -28,7 +32,8 @@ router.post("/upload", upload.any(), (req, res) => {
         return res.status(400).json({ error: "No file uploaded" });
     }
     const file = req.files[0];
-    const imageUrl = `https://api.shashvatenterprise.com/api/v1/multer/image/${file.filename}`;
+    const baseUrl = process.env.IMAGE_BASE_URL || "https://api.shashvatenterprise.com/api/v1/multer/image";
+    const imageUrl = `${baseUrl}/${file.filename}`;
     res.status(200).json({ imageUrl });
 });
 // Serve image by name

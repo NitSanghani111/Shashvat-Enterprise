@@ -12,6 +12,9 @@ import WhatsappContectButton from "../Componets/WhatsappContectButton";
 import SendRequirementButton from "../Componets/SendRequirementButton";
 import Loading from "../Componets/Loading";
 import { ChevronRight, Home, Info, Package, Star, Truck } from "lucide-react";
+import { extractProductInfoFromUrl } from "../utils/urlHelpers";
+import axios from "axios";
+import { backendUrl } from "../globle";
 
 const ProductDetail = () => {
   const params = useParams();
@@ -31,25 +34,69 @@ const ProductDetail = () => {
   useEffect(() => {
     scrollToTop();
     setUp();
-  }, [params.id]); // Changed: Only depend on params.id, not entire params or products
+  }, [params.id, params.category, params.productName]); // Watch all URL params
 
   const setUp = async () => {
     setIsLoading(true);
     
-    // Load all products if not already loaded
-    if (products === null) {
-      const fetchedProducts = await allProduct();
-      setProducts(fetchedProducts);
+    try {
+      const urlInfo = extractProductInfoFromUrl(params);
       
-      // Find the product after fetching
-      const foundProduct = fetchedProducts?.find(p => p.id == params.id);
-      setProduct(foundProduct);
-    } else {
-      // Products already loaded, just find the one we need
-      const foundProduct = products.find(p => p.id == params.id);
-      setProduct(foundProduct);
+      if (!urlInfo) {
+        setIsLoading(false);
+        return;
+      }
+      
+      if (urlInfo.type === 'id') {
+        // Old URL pattern - fetch by ID from local products or API
+        if (products === null) {
+          const fetchedProducts = await allProduct();
+          setProducts(fetchedProducts);
+          const foundProduct = fetchedProducts?.find(p => p.id === urlInfo.id);
+          setProduct(foundProduct);
+        } else {
+          const foundProduct = products.find(p => p.id === urlInfo.id);
+          setProduct(foundProduct);
+        }
+      } else if (urlInfo.type === 'slug') {
+        // New URL pattern - fetch by slug from API
+        const { category, subcategory, productName } = urlInfo;
+        
+        // Build API endpoint
+        let endpoint = `${backendUrl}/products/by-slug/${category}`;
+        if (subcategory) {
+          endpoint += `/${subcategory}/${productName}`;
+        } else {
+          endpoint += `/${productName}`;
+        }
+        
+        try {
+          const response = await axios.get(endpoint);
+          setProduct(response.data);
+          
+          // Update products atom if not loaded
+          if (products === null) {
+            const fetchedProducts = await allProduct();
+            setProducts(fetchedProducts);
+          }
+        } catch (error) {
+          console.error("Error fetching product by slug:", error);
+          // Fallback: try to find in local products
+          if (products === null) {
+            const fetchedProducts = await allProduct();
+            setProducts(fetchedProducts);
+            const foundProduct = fetchedProducts?.find(p => 
+              p.name.toLowerCase().replace(/\s+/g, '-') === productName &&
+              p.category.toLowerCase().replace(/\s+/g, '-') === category
+            );
+            setProduct(foundProduct);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error setting up product:", error);
     }
-
+    
     setIsLoading(false);
   };
 

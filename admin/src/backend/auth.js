@@ -29,8 +29,6 @@ export async function register(user, navigator) {
 }
 
 export async function login(email, password, navigator) {
- 
-
   try {
     const response = await axios.post(`${backendUrl}/auth/login`, {
       email,
@@ -39,16 +37,19 @@ export async function login(email, password, navigator) {
 
     if (response.status === 200) {
       const token = response.data.token;
+      const user = response.data.user;
+      
       localStorage.setItem("authToken", token);
-    
       alert("Login successful");
       navigator("/");
-      return {user: response.data.user, token};
+      
+      return { user: user || { ...response.data, isAdmin: response.data.isAdmin }, token };
     }
   } catch (error) {
     console.error("Error during login:", error);
-    alert(error.response?.data?.message || "Invalid credentials!");
-    return null;
+    const errorMsg = error.response?.data?.message || "Invalid credentials!";
+    alert(errorMsg);
+    return { user: null, token: null };
   }
 }
 

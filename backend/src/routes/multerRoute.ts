@@ -7,6 +7,11 @@ const router = Router();
 
 const imagesDir = path.join(__dirname, '../../images');
 
+// Create images directory if it doesn't exist
+if (!fs.existsSync(imagesDir)) {
+    fs.mkdirSync(imagesDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
     destination: (_req, _file, cb) => {
         cb(null, imagesDir);
@@ -29,7 +34,8 @@ router.post("/upload", upload.any(), (req:any, res:any) => {
         return res.status(400).json({ error: "No file uploaded" });
     }
     const file = req.files[0];
-    const imageUrl = `https://api.shashvatenterprise.com/api/v1/multer/image/${file.filename}`;
+    const baseUrl = process.env.IMAGE_BASE_URL || "https://api.shashvatenterprise.com/api/v1/multer/image";
+    const imageUrl = `${baseUrl}/${file.filename}`;
     res.status(200).json({ imageUrl });
 });
 

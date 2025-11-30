@@ -89,44 +89,54 @@ export async function deleteProduct(productId, selectedProductImg) {
 
 export async function updateProduct(formData) {
   try {
-    // Convert FormData to array of key-value pairs
-    const simpleDataArray = [];
+    // Convert FormData to object
+    const productData = {};
     for (let [key, value] of formData.entries()) {
-      simpleDataArray.push({ key, value });
+      if (key !== "originalimg") {
+        productData[key] = value;
+      }
     }
 
-   // update if image is not same
     console.log("image data:", formData.get("image"));
     console.log("original image data:", formData.get("originalimg"));
 
-    const isImageChanged = formData.get("image") !== formData.get("originalimg");
+    const originalImage = formData.get("originalimg");
+    const newImage = formData.get("image");
+    
+    // Check if image is a File object (meaning it was changed)
+    const isImageChanged = newImage instanceof File;
 
     console.log("isImageChanged:", isImageChanged);
     
-    let updatedImageUrl = false;
+    let imageUrl = originalImage;
 
     if (isImageChanged) {
-      updatedImageUrl = await updateImage(formData.get("image"));
+      const updatedImageUrl = await updateImage(newImage, originalImage);
       if (!updatedImageUrl) {
         toast.error("Failed to update image. Please try again.");
         return;
       }
+      imageUrl = updatedImageUrl;
     }
 
-    console.log("simpleDataArray : ", simpleDataArray);
+    // Update product data with the correct image URL
+    productData.image = imageUrl;
     
-    // const response = await axios.put(`${backendUrl}/products/update`, simpleDataObject, {
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     "x-auth-token": localStorage.getItem("authToken"),
-    //   },
-    // });
+    console.log("productData:", productData);
+    
+    const response = await axios.put(`${backendUrl}/products/update`, productData, {
+      headers: {
+        "Content-Type": "application/json",
+        "x-auth-token": localStorage.getItem("authToken"),
+      },
+    });
 
     toast.success("Product updated successfully!");
-    return [];
+    return response.data;
   } catch (error) {
     console.error("Error updating product:", error);
     toast.error("Failed to update product. Please try again.");
+    throw error;
   }
 }
 

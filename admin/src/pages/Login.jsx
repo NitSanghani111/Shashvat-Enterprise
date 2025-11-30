@@ -58,22 +58,23 @@ const Login = () => {
     if (Object.keys(validationErrors).length === 0) {
       // Proceed with form submission
       const res = await login(email, password, navigator);
-      setUser(res.user);
-
-      if (res.user !== null) {
-        if (res.user.isAdmin) {
-          setToken({ isAuthenticated: true, token: res.token });
-          if (requirements === null) {
-            const allRequest = await allRequirementRequest();
-            setRequirements(allRequest);
-            for (let i = 0; i < allRequest.length; i++) {
-              if (allRequest[i].isViewd == false) {
-                setIsNewRequrimentRequest(true);
-                break;
-              }
+      
+      if (res && res.user && res.user.isAdmin) {
+        setUser(res.user);
+        setToken({ isAuthenticated: true, token: res.token });
+        
+        if (requirements === null) {
+          const allRequest = await allRequirementRequest();
+          setRequirements(allRequest);
+          for (let i = 0; i < allRequest.length; i++) {
+            if (allRequest[i].isViewd == false) {
+              setIsNewRequrimentRequest(true);
+              break;
             }
           }
         }
+      } else {
+        console.warn('Login failed: User is not an admin or response is invalid');
       }
     }
     setIsLoading(false);

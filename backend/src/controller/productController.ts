@@ -104,6 +104,69 @@ export const getProductById = async (req: any, res: any) => {
   }
 };
 
+export const getProductBySlug = async (req: any, res: any) => {
+  try {
+    const { category, subcategory, productName } = req.params;
+    
+    // Determine if we have 2 or 3 parameters
+    // If productName is undefined, subcategory is actually the product name
+    const actualProductName = productName || subcategory;
+    const actualSubcategory = productName ? subcategory : null;
+    
+    // Decode URL-encoded parameters and convert back from slug format
+    const decodedCategory = decodeURIComponent(category).replace(/-/g, ' ');
+    const decodedSubcategory = actualSubcategory ? decodeURIComponent(actualSubcategory).replace(/-/g, ' ') : null;
+    const decodedProductName = decodeURIComponent(actualProductName).replace(/-/g, ' ');
+    
+    console.log('Searching for product:', {
+      category: decodedCategory,
+      subcategory: decodedSubcategory,
+      productName: decodedProductName
+    });
+    
+    // Build where clause
+    const whereClause: any = {
+      name: {
+        equals: decodedProductName,
+        mode: 'insensitive'
+      },
+      category: {
+        equals: decodedCategory,
+        mode: 'insensitive'
+      }
+    };
+    
+    if (decodedSubcategory) {
+      whereClause.subCategory = {
+        equals: decodedSubcategory,
+        mode: 'insensitive'
+      };
+    }
+    
+    const product = await prisma.product.findFirst({
+      where: whereClause
+    });
+
+    if (!product) {
+      return res.status(404).json({ 
+        message: "Product not found",
+        searchedFor: {
+          category: decodedCategory,
+          subcategory: decodedSubcategory,
+          productName: decodedProductName
+        }
+      });
+    }
+
+    return res.status(200).json(product);
+  } catch (error) {
+    console.log("Error fetching product by slug:", error);
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch product. Please try again." });
+  }
+};
+
 export const deleteProduct = async (req: any, res: any) => {
   const { productId }: { productId: string } = req.body;
 
@@ -140,23 +203,28 @@ export const updateProduct = async (req: any, res: any) => {
     weight,
   }: ProductInterface = req.body;
 
-  if (!image) {
-    return res.status(400).json({
-      message:
-        "Image is uploading! Please click the button after a few seconds.",
-    });
-  }
-
   if (!name || !moq || !category || !size) {
     return res.status(400).json({ message: "Fill all required fields!" });
   }
 
   try {
+    // Get existing product to check if image is provided
+    const existingProduct = await prisma.product.findUnique({
+      where: { id },
+    });
+
+    if (!existingProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
     const currentTime = new Date();
 
     // Convert boolean values to true/false
     const isPopularBool = isPopular === "true" ? true : false;
     const latestBool = latest === "true" ? true : false;
+
+    // Use existing image if no new image is provided
+    const imageToUse = image || existingProduct.img;
 
     const updatedProduct = await prisma.product.update({
       where: { id },
@@ -164,7 +232,7 @@ export const updateProduct = async (req: any, res: any) => {
         name,
         category,
         subCategory,
-        img: image,
+        img: imageToUse,
         isPopular : isPopularBool,
         latest : latestBool,
         material,

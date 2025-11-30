@@ -141,9 +141,18 @@ const DigitalCatalog = () => {
         >
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
             {/* Cover */}
-            <div className="relative h-96 bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center">
+            <div className="relative h-96 flex items-center justify-center overflow-hidden">
+              {/* Background Image */}
+              <img 
+                src="https://c8.alamy.com/comp/CX2HJY/abstract-background-of-golden-lights-CX2HJY.jpg" 
+                alt="" 
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              {/* Dark Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-900/90 via-gray-900/80 to-gray-800/85"></div>
+              {/* Subtle Pattern Overlay */}
               <div 
-                className="absolute inset-0 opacity-5"
+                className="absolute inset-0 opacity-10"
                 style={{
                   backgroundImage: `repeating-linear-gradient(45deg, ${BRAND_COLOR} 0px, ${BRAND_COLOR} 1px, transparent 1px, transparent 20px)`
                 }}

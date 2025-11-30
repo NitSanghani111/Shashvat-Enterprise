@@ -20,6 +20,7 @@ const DRAWER_WIDTH = 300;
 export default function NavBar({ window: windowProp }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [productMenuOpen, setProductMenuOpen] = React.useState(false);
+  const [qualityMenuOpen, setQualityMenuOpen] = React.useState(false);
   const [submenuOpen, setSubmenuOpen] = React.useState({});
   const [mobileSubmenuOpen, setMobileSubmenuOpen] = React.useState({});
   const [scrolled, setScrolled] = React.useState(false);
@@ -35,15 +36,21 @@ export default function NavBar({ window: windowProp }) {
   const isNewReq = useRecoilValue(isNewRequrimentRequestAtom);
 
   const productButtonRef = React.useRef(null);
+  const qualityButtonRef = React.useRef(null);
   const submenuAnchors = React.useRef({});
 
   const navItems = [
     { label: 'Home', path: '/' },
     { label: 'About Us', path: '/about' },
     { label: 'Products', path: '/products', hasDropdown: true },
-    { label: 'Services', path: '/services' },
+    { label: 'Quality', path: '/quality', hasDropdown: true },
     { label: 'Catalog', path: '/catalog' },
     { label: 'Contact Us', path: '/contact' }
+  ];
+
+  const qualityMenuItems = [
+    { label: 'Services', path: '/services' },
+    { label: 'Quality', path: '/quality' }
   ];
 
   const adminItems = user?.isAdmin ? [
@@ -78,11 +85,13 @@ export default function NavBar({ window: windowProp }) {
     navigate(p); 
     setMobileOpen(false); 
     setProductMenuOpen(false); 
+    setQualityMenuOpen(false);
     setSubmenuOpen({});
   };
 
   const isActiveRoute = (path) => location.pathname === path;
   const isProductsActive = () => location.pathname === '/products' || location.pathname.startsWith('/products/');
+  const isQualityActive = () => location.pathname === '/quality' || location.pathname === '/services';
 
   const renderDesktopDropdown = () => (
     <Popper 
@@ -240,6 +249,138 @@ export default function NavBar({ window: windowProp }) {
     </Popper>
   );
 
+  const renderQualityDropdown = () => (
+    <Popper 
+      open={qualityMenuOpen} 
+      anchorEl={qualityButtonRef.current} 
+      placement="bottom-start" 
+      transition 
+      disablePortal 
+      onMouseLeave={() => setQualityMenuOpen(false)}
+      style={{ zIndex: 1300 }}
+    >
+      {({ TransitionProps }) => (
+        <Grow {...TransitionProps} style={{ transformOrigin: 'top left' }}>
+          <Paper 
+            elevation={8}
+            sx={{ 
+              minWidth: 200, 
+              maxHeight: 480, 
+              overflowY: 'auto',
+              mt: 1,
+              borderRadius: 2,
+              border: '1px solid',
+              borderColor: 'divider',
+              boxShadow: '0 12px 48px rgba(0,0,0,0.12)',
+              '&::-webkit-scrollbar': { width: '8px' },
+              '&::-webkit-scrollbar-thumb': { 
+                backgroundColor: 'rgba(0,0,0,0.2)', 
+                borderRadius: '4px' 
+              }
+            }}
+          >
+            <ClickAwayListener onClickAway={() => setQualityMenuOpen(false)}>
+              <MenuList sx={{ py: 1 }}>
+                {qualityMenuItems.map(item => (
+                  <MenuItem 
+                    key={item.label}
+                    onClick={() => navigateTo(item.path)}
+                    sx={{ 
+                      py: 1.5,
+                      px: 2.5,
+                      fontFamily: "'Inter', 'Roboto', sans-serif",
+                      fontSize: '0.95rem',
+                      fontWeight: 500,
+                      color: isActiveRoute(item.path) ? '#c5b173' : '#1a1a1a',
+                      transition: 'all 0.2s ease',
+                      '&:hover': { 
+                        backgroundColor: 'rgba(197, 177, 115, 0.08)',
+                        color: '#c5b173',
+                        pl: 3
+                      }
+                    }}
+                  >
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </ClickAwayListener>
+          </Paper>
+        </Grow>
+      )}
+    </Popper>
+  );
+
+  const renderMobileQuality = () => (
+    <>
+      <ListItem disablePadding>
+        <ListItemButton 
+          onClick={() => setMobileSubmenuOpen(s => ({ ...s, quality: !s.quality }))}
+          aria-label="Quality menu"
+          aria-expanded={!!mobileSubmenuOpen.quality}
+          aria-haspopup="true"
+          sx={{ 
+            justifyContent: 'space-between',
+            py: 1.75,
+            px: 3,
+            fontFamily: "'Inter', 'Roboto', sans-serif",
+            transition: 'all 0.2s ease',
+            '&:hover': { 
+              backgroundColor: 'rgba(197, 177, 115, 0.08)',
+              pl: 3.5
+            }
+          }}
+        >
+          <ListItemText 
+            primary="Quality" 
+            primaryTypographyProps={{ 
+              fontWeight: 600,
+              fontSize: '1rem',
+              fontFamily: "'Inter', 'Roboto', sans-serif"
+            }} 
+          />
+          {mobileSubmenuOpen.quality ? 
+            <ExpandLessIcon sx={{ color: '#c5b173' }} /> : 
+            <ExpandMoreIcon sx={{ color: '#666' }} />
+          }
+        </ListItemButton>
+      </ListItem>
+      <Collapse in={!!mobileSubmenuOpen.quality} timeout={300}>
+        <List component="div" disablePadding>
+          {qualityMenuItems.map(item => (
+            <ListItem key={item.label} disablePadding>
+              <ListItemButton 
+                onClick={() => navigateTo(item.path)} 
+                sx={{ 
+                  pl: 5,
+                  pr: 3,
+                  py: 1.5,
+                  backgroundColor: isActiveRoute(item.path) ? 'rgba(197, 177, 115, 0.08)' : 'transparent',
+                  borderLeft: isActiveRoute(item.path) ? '4px solid #c5b173' : '4px solid transparent',
+                  transition: 'all 0.2s ease',
+                  '&:hover': { 
+                    backgroundColor: 'rgba(197, 177, 115, 0.08)',
+                    pl: 5.5
+                  }
+                }}
+              >
+                <ListItemText 
+                  primary={item.label}
+                  primaryTypographyProps={{
+                    fontSize: '0.95rem',
+                    fontWeight: isActiveRoute(item.path) ? 600 : 500,
+                    color: isActiveRoute(item.path) ? '#c5b173' : '#555',
+                    fontFamily: "'Inter', 'Roboto', sans-serif"
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Collapse>
+    </>
+  );
+
   const renderMobileProducts = () => (
     <>
       <ListItem disablePadding>
@@ -365,36 +506,43 @@ export default function NavBar({ window: windowProp }) {
       </Box>
       
       <List sx={{ flex: 1, overflowY: 'auto', py: 2, bgcolor: 'white' }}>
-        {navItems.map(item => item.hasDropdown ? (
-          <React.Fragment key={item.label}>{renderMobileProducts()}</React.Fragment>
-        ) : (
-          <ListItem key={item.label} disablePadding>
-            <ListItemButton 
-              onClick={() => navigateTo(item.path)}
-              sx={{
-                py: 1.75,
-                px: 3,
-                transition: 'all 0.2s ease',
-                backgroundColor: isActiveRoute(item.path) ? 'rgba(197, 177, 115, 0.08)' : 'transparent',
-                borderLeft: isActiveRoute(item.path) ? '4px solid #c5b173' : '4px solid transparent',
-                '&:hover': { 
-                  backgroundColor: 'rgba(197, 177, 115, 0.08)',
-                  pl: 3.5
-                }
-              }}
-            >
-              <ListItemText 
-                primary={item.label}
-                primaryTypographyProps={{
-                  fontWeight: isActiveRoute(item.path) ? 600 : 500,
-                  fontSize: '1rem',
+        {navItems.map(item => {
+          if (item.label === 'Products' && item.hasDropdown) {
+            return <React.Fragment key={item.label}>{renderMobileProducts()}</React.Fragment>;
+          } else if (item.label === 'Quality' && item.hasDropdown) {
+            return <React.Fragment key={item.label}>{renderMobileQuality()}</React.Fragment>;
+          } else {
+            return (
+              <ListItem key={item.label} disablePadding>
+                <ListItemButton 
+                  onClick={() => navigateTo(item.path)}
+                  sx={{
+                    py: 1.75,
+                    px: 3,
+                    transition: 'all 0.2s ease',
+                    backgroundColor: isActiveRoute(item.path) ? 'rgba(197, 177, 115, 0.08)' : 'transparent',
+                    borderLeft: isActiveRoute(item.path) ? '4px solid #c5b173' : '4px solid transparent',
+                    '&:hover': { 
+                      backgroundColor: 'rgba(197, 177, 115, 0.08)',
+                      pl: 3.5
+                    }
+                  }}
+                >
+                  <ListItemText 
+                    primary={item.label}
+                    primaryTypographyProps={{
+                      fontWeight: isActiveRoute(item.path) ? 600 : 500,
+                      fontSize: '1rem',
                   color: isActiveRoute(item.path) ? '#c5b173' : '#333',
                   fontFamily: "'Inter', 'Roboto', sans-serif"
                 }}
               />
             </ListItemButton>
           </ListItem>
-        ))}
+            );
+          }
+        }
+        )}
         
         {adminItems.length > 0 && (
           <>
@@ -523,74 +671,129 @@ export default function NavBar({ window: windowProp }) {
             justifyContent: 'center',
             ml: 6
           }}>
-            {navItems.map(item => item.hasDropdown ? (
-              <Box key={item.label}>
-                <Button 
-                  ref={productButtonRef} 
-                  onMouseEnter={() => setProductMenuOpen(true)} 
-                  onClick={() => navigateTo(item.path)}
-                  aria-label="Products menu"
-                  aria-expanded={Boolean(productMenuOpen)}
-                  aria-haspopup="true"
-                  endIcon={<ExpandMoreIcon sx={{ 
-                    transition: 'transform 0.2s ease',
-                    transform: productMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)'
-                  }} />} 
-                  sx={{ 
-                    textTransform: 'none', 
-                    fontWeight: 600,
-                    fontSize: '0.95rem',
-                    color: productMenuOpen || isProductsActive() ? '#c5b173' : '#333',
-                    fontFamily: "'Inter', 'Roboto', sans-serif",
-                    px: 2.5,
-                    py: 1.25,
-                    position: 'relative',
-                    transition: 'all 0.2s ease',
-                    '&::after': {
-                      content: '""',
-                      position: 'absolute',
-                      bottom: 8,
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      width: productMenuOpen || isProductsActive() ? '60%' : '0%',
-                      height: '2px',
-                      bgcolor: '#c5b173',
-                      transition: 'width 0.3s ease'
-                    },
-                    '&:hover': {
-                      color: '#c5b173',
-                      backgroundColor: 'rgba(197, 177, 115, 0.04)',
-                      '&::after': { width: '60%' }
-                    }
-                  }}
-                >
-                  {item.label}
-                </Button>
-                {renderDesktopDropdown()}
-              </Box>
-            ) : (
-              <Button 
-                key={item.label} 
-                onClick={() => navigateTo(item.path)}
-                aria-label={`Navigate to ${item.label}`}
-                aria-current={isActiveRoute(item.path) ? 'page' : undefined}
-                sx={{ 
-                  textTransform: 'none', 
-                  fontWeight: 600,
-                  fontSize: '0.95rem',
-                  color: isActiveRoute(item.path) ? '#c5b173' : '#333',
-                  fontFamily: "'Inter', 'Roboto', sans-serif",
-                  px: 2.5,
-                  py: 1.25,
-                  position: 'relative',
-                  transition: 'all 0.2s ease',
-                  '&::after': {
-                    content: '""',
-                    position: 'absolute',
-                    bottom: 8,
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: isActiveRoute(item.path) ? '60%' : '0%',
+            {navItems.map(item => {
+              if (item.label === 'Products' && item.hasDropdown) {
+                return (
+                  <Box 
+                    key={item.label} 
+                    onMouseEnter={() => setProductMenuOpen(true)}
+                    onMouseLeave={() => setProductMenuOpen(false)}
+                  >
+                    <Button 
+                      ref={productButtonRef} 
+                      onMouseEnter={() => setProductMenuOpen(true)} 
+                      onClick={() => navigateTo(item.path)}
+                      aria-label="Products menu"
+                      aria-expanded={Boolean(productMenuOpen)}
+                      aria-haspopup="true"
+                      endIcon={<ExpandMoreIcon sx={{ 
+                        transition: 'transform 0.2s ease',
+                        transform: productMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)'
+                      }} />} 
+                      sx={{ 
+                        textTransform: 'none', 
+                        fontWeight: 600,
+                        fontSize: '0.95rem',
+                        color: productMenuOpen || isProductsActive() ? '#c5b173' : '#333',
+                        fontFamily: "'Inter', 'Roboto', sans-serif",
+                        px: 2.5,
+                        py: 1.25,
+                        position: 'relative',
+                        transition: 'all 0.2s ease',
+                        '&::after': {
+                          content: '""',
+                          position: 'absolute',
+                          bottom: 8,
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          width: productMenuOpen || isProductsActive() ? '60%' : '0%',
+                          height: '2px',
+                          bgcolor: '#c5b173',
+                          transition: 'width 0.3s ease'
+                        },
+                        '&:hover': {
+                          color: '#c5b173',
+                          backgroundColor: 'rgba(197, 177, 115, 0.04)',
+                          '&::after': { width: '60%' }
+                        }
+                      }}
+                    >
+                      {item.label}
+                    </Button>
+                    {renderDesktopDropdown()}
+                  </Box>
+                );
+              } else if (item.label === 'Quality' && item.hasDropdown) {
+                return (
+                  <Box key={item.label}>
+                    <Button 
+                      ref={qualityButtonRef} 
+                      onMouseEnter={() => setQualityMenuOpen(true)} 
+                      onClick={() => navigateTo(item.path)}
+                      aria-label="Quality menu"
+                      aria-expanded={Boolean(qualityMenuOpen)}
+                      aria-haspopup="true"
+                      endIcon={<ExpandMoreIcon sx={{ 
+                        transition: 'transform 0.2s ease',
+                        transform: qualityMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)'
+                      }} />} 
+                      sx={{ 
+                        textTransform: 'none', 
+                        fontWeight: 600,
+                        fontSize: '0.95rem',
+                        color: qualityMenuOpen || isQualityActive() ? '#c5b173' : '#333',
+                        fontFamily: "'Inter', 'Roboto', sans-serif",
+                        px: 2.5,
+                        py: 1.25,
+                        position: 'relative',
+                        transition: 'all 0.2s ease',
+                        '&::after': {
+                          content: '""',
+                          position: 'absolute',
+                          bottom: 8,
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          width: qualityMenuOpen || isQualityActive() ? '60%' : '0%',
+                          height: '2px',
+                          bgcolor: '#c5b173',
+                          transition: 'width 0.3s ease'
+                        },
+                        '&:hover': {
+                          color: '#c5b173',
+                          backgroundColor: 'rgba(197, 177, 115, 0.04)',
+                          '&::after': { width: '60%' }
+                        }
+                      }}
+                    >
+                      {item.label}
+                    </Button>
+                    {renderQualityDropdown()}
+                  </Box>
+                );
+              } else {
+                return (
+                  <Button 
+                    key={item.label} 
+                    onClick={() => navigateTo(item.path)}
+                    aria-label={`Navigate to ${item.label}`}
+                    aria-current={isActiveRoute(item.path) ? 'page' : undefined}
+                    sx={{ 
+                      textTransform: 'none', 
+                      fontWeight: 600,
+                      fontSize: '0.95rem',
+                      color: isActiveRoute(item.path) ? '#c5b173' : '#333',
+                      fontFamily: "'Inter', 'Roboto', sans-serif",
+                      px: 2.5,
+                      py: 1.25,
+                      position: 'relative',
+                      transition: 'all 0.2s ease',
+                      '&::after': {
+                        content: '""',
+                        position: 'absolute',
+                        bottom: 8,
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        width: isActiveRoute(item.path) ? '60%' : '0%',
                     height: '2px',
                     bgcolor: '#c5b173',
                     transition: 'width 0.3s ease'
@@ -604,7 +807,10 @@ export default function NavBar({ window: windowProp }) {
               >
                 {item.label}
               </Button>
-            ))}
+                );
+              }
+            }
+            )}
             {adminItems.map(it => (
               <Button 
                 key={it.label} 

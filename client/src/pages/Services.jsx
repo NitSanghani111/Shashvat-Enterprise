@@ -48,12 +48,6 @@ const Services = () => {
       features: ['CAD Support', 'Material Selection', 'Process Optimization']
     },
     {
-      icon: Shield,
-      title: 'Quality Testing',
-      description: '100% inspection and testing of all products to ensure they meet BIS and ISO quality standards.',
-      features: ['Dimensional Testing', 'Material Analysis', 'Performance Testing']
-    },
-    {
       icon: Box,
       title: 'Custom Packaging',
       description: 'Professional packaging solutions tailored to protect your products during transit and storage.',
@@ -121,7 +115,6 @@ const Services = () => {
     { icon: GitBranch, title: 'Threading', description: 'Internal & external thread cutting' },
     { icon: Gauge, title: 'Knurling', description: 'Textured surface patterns' },
     { icon: Sparkles, title: 'Surface Finishing', description: 'Electroplating & coating services' },
-    { icon: TestTube, title: 'Quality Testing', description: 'Advanced testing equipment' },
     { icon: Box, title: 'Custom Packaging', description: 'Tailored packaging solutions' }
   ];
 
@@ -133,14 +126,6 @@ const Services = () => {
     { icon: Settings, name: 'Automotive Parts', desc: 'Fasteners, fittings, bushings' },
     { icon: Factory, name: 'Industrial Equipment', desc: 'Couplings, adapters, flanges' },
     { icon: Globe2, name: 'Pan-India Supply', desc: 'Serving all Indian states' }
-  ];
-
-  // Quality Standards
-  const qualityStandards = [
-    { icon: Award, title: 'ISO & BIS Certified', desc: 'Indian & international standards' },
-    { icon: Shield, title: '100% Inspection', desc: 'Every product tested' },
-    { icon: TestTube, title: 'Material Testing', desc: 'Certified raw materials' },
-    { icon: CheckCircle, title: 'Quality Assurance', desc: 'Zero defect policy' }
   ];
 
   return (
@@ -277,7 +262,7 @@ const Services = () => {
         </section>
 
         {/* Manufacturing Process Section */}
-        <section id="manufacturing" ref={processRef} className="py-20 bg-white">
+        {/* <section id="manufacturing" ref={processRef} className="py-20 bg-white">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -305,7 +290,7 @@ const Services = () => {
                   transition={{ duration: 0.6, delay: index * 0.15 }}
                   className={`flex flex-col lg:flex-row gap-8 mb-12 ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}
                 >
-                  {/* Step Number & Icon */}
+                
                   <div className="flex-shrink-0 lg:w-64">
                     <div className="relative">
                       <div
@@ -320,7 +305,7 @@ const Services = () => {
                     </div>
                   </div>
 
-                  {/* Content */}
+                
                   <div className="flex-1 bg-gray-50 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
                     <h3 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">{process.title}</h3>
                     <p className="text-gray-700 mb-6 leading-relaxed text-lg">{process.description}</p>
@@ -341,7 +326,6 @@ const Services = () => {
               ))}
             </div>
 
-            {/* Process Flow Visualization */}
             <div className="mt-16 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-8 md:p-12 text-white">
               <h3 className="text-2xl md:text-3xl font-bold mb-8 text-center">Complete Process Timeline</h3>
               <div className="flex flex-col md:flex-row items-center justify-between gap-6">
@@ -364,7 +348,7 @@ const Services = () => {
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* Manufacturing Capabilities */}
         <section ref={capabilitiesRef} className="py-20 bg-gray-50">
@@ -403,40 +387,6 @@ const Services = () => {
                   </div>
                   <h3 className="font-bold text-lg mb-2 text-gray-900">{capability.title}</h3>
                   <p className="text-sm text-gray-600">{capability.description}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Quality Standards */}
-        <section className="py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-black mb-4 text-gray-900">Quality Standards</h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                Committed to delivering excellence through rigorous quality control
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
-              {qualityStandards.map((standard, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="text-center"
-                >
-                  <div
-                    className="w-20 h-20 rounded-2xl mx-auto mb-4 flex items-center justify-center text-white shadow-lg"
-                    style={{ background: `linear-gradient(135deg, ${BRAND_COLOR}, #d4a574)` }}
-                  >
-                    <standard.icon className="w-10 h-10" />
-                  </div>
-                  <h3 className="font-bold text-lg mb-2 text-gray-900">{standard.title}</h3>
-                  <p className="text-sm text-gray-600">{standard.desc}</p>
                 </motion.div>
               ))}
             </div>

@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Services from "./pages/Services";
+import Quality from "./pages/Quality";
 import ProductPage from "./pages/ProductPage";
 import Catalog from "./pages/Catalog";
 import ComingSoon from "./pages/ComingSoon";
@@ -73,10 +74,19 @@ function AppContent() {
             <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
             <Route path="/about" element={<ProtectedRoute><About /></ProtectedRoute>} />
             <Route path="/services" element={<ProtectedRoute><Services /></ProtectedRoute>} />
+            <Route path="/quality" element={<ProtectedRoute><Quality /></ProtectedRoute>} />
             <Route path="/catalog" element={<ProtectedRoute><Catalog /></ProtectedRoute>} />
             <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
             <Route path="/products" element={<ProtectedRoute><ProductPage /></ProtectedRoute>} />
+            
+            {/* Product Detail Routes - New SEO-friendly URLs */}
+            <Route path="/product/:category/:subcategory/:productName" element={<ProtectedRoute><Productdetail /></ProtectedRoute>} />
+            <Route path="/product/:category/:productName" element={<ProtectedRoute><Productdetail /></ProtectedRoute>} />
+            
+            {/* Product Detail Routes - Old URL pattern (backward compatibility) */}
             <Route path="/productdetail/:id" element={<ProtectedRoute><Productdetail /></ProtectedRoute>} />
+            
+            {/* Product Category/Subcategory Routes */}
             <Route path="/products/:category" element={<ProtectedRoute><ProductPage /></ProtectedRoute>} />
             <Route path="/products/:category/:subcategory" element={<ProtectedRoute><ProductPage /></ProtectedRoute>} />
             

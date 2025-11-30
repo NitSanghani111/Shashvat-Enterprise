@@ -1,11 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import { 
   MapPin, Phone, Mail, Globe, User, Send, Clock, 
-  MessageSquare, CheckCircle, ArrowRight, Building2 
+  MessageSquare, CheckCircle, ArrowRight, Building2, X, AlertCircle 
 } from 'lucide-react';
+import emailjs from 'emailjs-com';
 import SEO from '../Componets/SEO';
 import seoData from '../Componets/Seos';
+
+// EmailJS Configuration
+const EMAILJS_SERVICE_ID = 'service_8a861ne';
+const EMAILJS_TEMPLATE_ID = 'template_foi4fey';
+const EMAILJS_PUBLIC_KEY = 'cSQRLe4Pgy9Kq4H8f';
 
 const BRAND_COLOR = '#c5b173';
 
@@ -14,14 +20,18 @@ const Contact = () => {
     product: '',
     description: '',
     name: '',
+    company: '',
     email: '',
     phone: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null);
+  const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error' | null
+  const [showModal, setShowModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   
   const formRef = useRef(null);
-  const isFormInView = useInView(formRef, { once: true, amount: 0.3 });
+  const sectionFormRef = useRef(null);
+  const isFormInView = useInView(sectionFormRef, { once: true, amount: 0.3 });
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -76,21 +86,53 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrorMessage('');
     
-    // Simulate form submission
-    setTimeout(() => {
+    // Prepare template parameters
+    const templateParams = {
+      name: formData.name,
+      company: formData.company,
+      email: formData.email,
+      phone: formData.phone,
+      product: formData.product,
+      description: formData.description,
+    };
+
+    console.log('Sending email with params:', templateParams);
+    
+    try {
+      const result = await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        templateParams,
+        EMAILJS_PUBLIC_KEY
+      );
+      
+      console.log('EmailJS Success:', result.text);
       setIsSubmitting(false);
       setSubmitStatus('success');
+      setShowModal(true);
       setFormData({
         product: '',
         description: '',
         name: '',
+        company: '',
         email: '',
         phone: ''
       });
-      
-      setTimeout(() => setSubmitStatus(null), 5000);
-    }, 1500);
+    } catch (error) {
+      console.error('EmailJS Error:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
+      setErrorMessage(error?.text || error?.message || 'Unknown error occurred');
+      setIsSubmitting(false);
+      setSubmitStatus('error');
+      setShowModal(true);
+    }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setTimeout(() => setSubmitStatus(null), 300);
   };
 
   const handleReset = () => {
@@ -102,7 +144,150 @@ const Contact = () => {
       phone: ''
     });
     setSubmitStatus(null);
+    setShowModal(false);
   };
+
+  // Success/Error Modal Component
+  const StatusModal = () => (
+    <AnimatePresence>
+      {showModal && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={closeModal}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+            >
+              <X className="w-5 h-5 text-gray-500" />
+            </button>
+
+            {submitStatus === 'success' ? (
+              <>
+                {/* Success Animation */}
+                <div className="flex justify-center mb-6">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", damping: 15, stiffness: 200, delay: 0.1 }}
+                    className="w-20 h-20 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center shadow-lg"
+                  >
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                      <CheckCircle className="w-10 h-10 text-white" />
+                    </motion.div>
+                  </motion.div>
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-center"
+                >
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    Message Sent Successfully!
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    Thank you for contacting us. We've received your inquiry and will get back to you within 24 hours.
+                  </p>
+                  
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button
+                      onClick={closeModal}
+                      className="px-6 py-3 rounded-lg font-semibold text-white transition-all hover:scale-105"
+                      style={{ background: `linear-gradient(135deg, ${BRAND_COLOR}, #d4a574)` }}
+                    >
+                      Got it, Thanks!
+                    </button>
+                  </div>
+                </motion.div>
+
+                {/* Confetti-like decoration */}
+                <div className="absolute -top-10 -left-10 w-32 h-32 bg-green-200/30 rounded-full blur-2xl"></div>
+                <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-amber-200/30 rounded-full blur-2xl"></div>
+              </>
+            ) : (
+              <>
+                {/* Error Animation */}
+                <div className="flex justify-center mb-6">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", damping: 15, stiffness: 200, delay: 0.1 }}
+                    className="w-20 h-20 rounded-full bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center shadow-lg"
+                  >
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                      <AlertCircle className="w-10 h-10 text-white" />
+                    </motion.div>
+                  </motion.div>
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-center"
+                >
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    Failed to Send Message
+                  </h3>
+                  <p className="text-gray-600 mb-2">
+                    Something went wrong. Please try again or contact us directly via phone or email.
+                  </p>
+                  {errorMessage && (
+                    <p className="text-red-500 text-sm mb-4 bg-red-50 p-2 rounded">
+                      Error: {errorMessage}
+                    </p>
+                  )}
+                  
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button
+                      onClick={closeModal}
+                      className="px-6 py-3 rounded-lg font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 transition-all"
+                    >
+                      Try Again
+                    </button>
+                    <a
+                      href="tel:+919825049059"
+                      className="px-6 py-3 rounded-lg font-semibold text-white transition-all hover:scale-105 flex items-center justify-center gap-2"
+                      style={{ background: `linear-gradient(135deg, ${BRAND_COLOR}, #d4a574)` }}
+                    >
+                      <Phone className="w-4 h-4" />
+                      Call Us
+                    </a>
+                  </div>
+                </motion.div>
+
+                {/* Decoration */}
+                <div className="absolute -top-10 -left-10 w-32 h-32 bg-red-200/30 rounded-full blur-2xl"></div>
+                <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-gray-200/30 rounded-full blur-2xl"></div>
+              </>
+            )}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 
   return (
     <div className="bg-gray-50">
@@ -285,7 +470,7 @@ const Contact = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
             {/* Contact Form */}
             <motion.div
-              ref={formRef}
+              ref={sectionFormRef}
               initial={{ opacity: 0, x: -50 }}
               animate={isFormInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.8 }}
@@ -301,7 +486,7 @@ const Contact = () => {
                   </p>
                 </div>
 
-                {submitStatus === 'success' && (
+                {submitStatus === 'success' && !showModal && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -314,7 +499,7 @@ const Contact = () => {
                   </motion.div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Product / Service Looking For <span className="text-red-500">*</span>
@@ -323,7 +508,7 @@ const Contact = () => {
                       type="text"
                       name="product"
                       value={formData.product}
-                      onChange={handleInputChange}
+                      onChange={(e) => setFormData(prev => ({ ...prev, product: e.target.value }))}
                       placeholder="e.g., Brass Fittings, Sanitary Hardware"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-2 transition-all hover:border-gray-400"
                       style={{ borderColor: formData.product ? BRAND_COLOR : '' }}
@@ -340,7 +525,7 @@ const Contact = () => {
                     <textarea
                       name="description"
                       value={formData.description}
-                      onChange={handleInputChange}
+                      onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                       placeholder="Please provide details about your requirements..."
                       rows="4"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-2 transition-all hover:border-gray-400 resize-none"
@@ -360,7 +545,7 @@ const Contact = () => {
                         type="text"
                         name="name"
                         value={formData.name}
-                        onChange={handleInputChange}
+                        onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                         placeholder="John Doe"
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-2 transition-all hover:border-gray-400"
                         style={{ borderColor: formData.name ? BRAND_COLOR : '' }}
@@ -378,7 +563,7 @@ const Contact = () => {
                         type="tel"
                         name="phone"
                         value={formData.phone}
-                        onChange={handleInputChange}
+                        onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                         placeholder="+91 XXXXX XXXXX"
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-2 transition-all hover:border-gray-400"
                         style={{ borderColor: formData.phone ? BRAND_COLOR : '' }}
@@ -391,13 +576,30 @@ const Contact = () => {
 
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Company / Enterprise Name
+                    </label>
+                    <input
+                      type="text"
+                      name="company"
+                      value={formData.company}
+                      onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
+                      placeholder="Your Company Name (Optional)"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-2 transition-all hover:border-gray-400"
+                      style={{ borderColor: formData.company ? BRAND_COLOR : '' }}
+                      onFocus={(e) => e.target.style.borderColor = BRAND_COLOR}
+                      onBlur={(e) => e.target.style.borderColor = ''}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Email Address <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="email"
                       name="email"
                       value={formData.email}
-                      onChange={handleInputChange}
+                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                       placeholder="john@example.com"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-2 transition-all hover:border-gray-400"
                       style={{ borderColor: formData.email ? BRAND_COLOR : '' }}
@@ -539,6 +741,9 @@ const Contact = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Success/Error Modal */}
+      <StatusModal />
     </div>
   );
 };

@@ -19,17 +19,18 @@ const Catalog = () => {
       />
 
       {/* Modern Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-black py-20">
-        {/* Animated Background */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-yellow-500/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-yellow-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full">
-            <div className="absolute inset-0 opacity-5" style={{
-              backgroundImage: `radial-gradient(circle at 2px 2px, #c5b173 1px, transparent 0)`,
-              backgroundSize: '40px 40px'
-            }}></div>
-          </div>
+      <section className="relative overflow-hidden py-24 md:py-32">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <img 
+            src="https://t4.ftcdn.net/jpg/06/53/73/19/360_F_653731975_98MPCXz8ctTQkUI3dx4qEXIfLnNcL5PS.jpg" 
+            alt="" 
+            className="w-full h-full object-cover"
+          />
+          {/* Dark Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/70 to-black/60"></div>
+          {/* Subtle Gold Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-900/20 via-transparent to-amber-800/10"></div>
         </div>
 
         <div className="container mx-auto px-4 md:px-6 lg:px-8 relative z-10">

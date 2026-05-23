@@ -10,9 +10,11 @@ import { clientRequirmentsAtom } from "../Atoms/clientRequirmentsAtom";
 import { login } from "../backend/auth";
 import { allRequirementRequest } from "../backend/manageRequrimentOfUser";
 import { authAtom } from "../Atoms/authAtom";
-import { Lock, Mail, Eye, EyeOff, Shield, ArrowRight, Sparkles, LogIn, KeyRound, CheckCircle, Award, TrendingUp } from "lucide-react";
+import { Lock, Mail, Eye, EyeOff, ArrowRight, Sparkles, Shield, CheckCircle2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
-const BRAND_COLOR = '#c5b173';
+// Import official Shashvat Enterprise logo
+import shashvatLogo from "../img/image.png";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -21,31 +23,18 @@ const Login = () => {
   const [user, setUser] = useRecoilState(userAtom);
   const setToken = useSetRecoilState(authAtom);
   const [isLoading, setIsLoading] = useRecoilState(loadingAtom);
-  const [isNewRequrimentRequest, setIsNewRequrimentRequest] = useRecoilState(
-    isNewRequrimentRequestAtom
-  );
+  const [isNewRequrimentRequest, setIsNewRequrimentRequest] = useRecoilState(isNewRequrimentRequestAtom);
   const [requirements, setRequirements] = useRecoilState(clientRequirmentsAtom);
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
-  const [focusedField, setFocusedField] = useState(null);
   const navigator = useNavigate();
 
   const validate = () => {
     let errors = {};
     let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!email) {
-      errors.email = "Email is required";
-    } else if (!emailPattern.test(email)) {
-      errors.email = "Invalid email format";
-    }
-
-    if (!password) {
-      errors.password = "Password is required";
-    } else if (password.length < 6) {
-      errors.password = "Password must be at least 6 characters";
-    }
-
+    if (!email) errors.email = "Email is required";
+    else if (!emailPattern.test(email)) errors.email = "Invalid email format";
+    if (!password) errors.password = "Password is required";
+    else if (password.length < 6) errors.password = "Password must be at least 6 characters";
     return errors;
   };
 
@@ -56,13 +45,10 @@ const Login = () => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      // Proceed with form submission
       const res = await login(email, password, navigator);
-      
       if (res && res.user && res.user.isAdmin) {
         setUser(res.user);
         setToken({ isAuthenticated: true, token: res.token });
-        
         if (requirements === null) {
           const allRequest = await allRequirementRequest();
           setRequirements(allRequest);
@@ -73,323 +59,442 @@ const Login = () => {
             }
           }
         }
-      } else {
-        console.warn('Login failed: User is not an admin or response is invalid');
       }
     }
     setIsLoading(false);
   };
 
-  function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
   useEffect(() => {
-    scrollToTop();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
+  // Floating particles - reduced count for better performance
+  const particles = Array.from({ length: 12 }, (_, i) => ({
+    id: i,
+    size: Math.random() * 4 + 2,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    duration: Math.random() * 20 + 15,
+    delay: Math.random() * 5,
+  }));
+
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden py-4 px-4" 
-      style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)' }}>
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
+      style={{ background: 'linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #0c0c0c 100%)' }}>
       
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }}></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full blur-3xl animate-pulse" 
-          style={{ background: BRAND_COLOR, animationDuration: '6s' }}></div>
-        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '5s' }}></div>
-      </div>
-
-      {/* Grid Pattern */}
-      <div className="absolute inset-0 opacity-5" style={{
-        backgroundImage: `linear-gradient(${BRAND_COLOR} 1px, transparent 1px), linear-gradient(90deg, ${BRAND_COLOR} 1px, transparent 1px)`,
-        backgroundSize: '50px 50px'
-      }}></div>
-
       {isLoading && <Loading />}
 
-      {/* Main Card - HORIZONTAL Layout */}
-      <div className="relative z-10 w-full max-w-6xl">
-        <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden animate-fadeIn">
-          
-          {/* Horizontal Split Layout */}
-          <div className="grid lg:grid-cols-2 min-h-[600px]">
+      {/* Animated Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Gradient Orbs */}
+        <motion.div
+          className="absolute w-[600px] h-[600px] rounded-full blur-[120px] opacity-30"
+          style={{ background: 'linear-gradient(135deg, #c5a172, #8b6914)' }}
+          animate={{
+            x: ['-20%', '10%', '-20%'],
+            y: ['-20%', '20%', '-20%'],
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute right-0 bottom-0 w-[500px] h-[500px] rounded-full blur-[100px] opacity-20"
+          style={{ background: 'linear-gradient(135deg, #c5a172, #d4af37)' }}
+          animate={{
+            x: ['20%', '-10%', '20%'],
+            y: ['20%', '-20%', '20%'],
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: 'easeInOut' }}
+        />
+
+        {/* Floating Particles */}
+        {particles.map((p) => (
+          <motion.div
+            key={p.id}
+            className="absolute rounded-full"
+            style={{
+              width: p.size,
+              height: p.size,
+              left: `${p.x}%`,
+              top: `${p.y}%`,
+              background: 'rgba(197, 161, 114, 0.4)',
+              boxShadow: '0 0 10px rgba(197, 161, 114, 0.3)',
+            }}
+            animate={{
+              y: [0, -100, 0],
+              opacity: [0, 1, 0],
+            }}
+            transition={{
+              duration: p.duration,
+              repeat: Infinity,
+              delay: p.delay,
+              ease: 'easeInOut',
+            }}
+          />
+        ))}
+
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(rgba(197,161,114,0.5) 1px, transparent 1px), 
+                              linear-gradient(90deg, rgba(197,161,114,0.5) 1px, transparent 1px)`,
+            backgroundSize: '60px 60px',
+          }}
+        />
+      </div>
+
+      {/* Main Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 40, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="relative z-10 w-full max-w-5xl"
+      >
+        {/* Card Glow Effect */}
+        <div
+          className="absolute -inset-[1px] rounded-3xl opacity-40 blur-sm"
+          style={{
+            background: 'radial-gradient(600px circle at 50% 50%, rgba(197,161,114,0.3), transparent 50%)',
+          }}
+        />
+        
+        {/* Card Border Gradient */}
+        <div className="absolute -inset-[1px] rounded-3xl"
+          style={{
+            background: 'linear-gradient(135deg, rgba(197,161,114,0.3), rgba(197,161,114,0.1), rgba(197,161,114,0.3))',
+          }}
+        />
+
+        {/* Card Content */}
+        <div className="relative bg-[#0d0d0d] rounded-3xl overflow-hidden">
+          <div className="grid lg:grid-cols-2">
             
-            {/* LEFT SIDE - Branding & Info */}
-            <div className="relative p-8 lg:p-12 flex flex-col justify-center text-white overflow-hidden"
-              style={{ background: `linear-gradient(135deg, ${BRAND_COLOR} 0%, #b8935f 50%, #d4a574 100%)` }}>
+            {/* Left Panel - Branding */}
+            <div className="relative p-8 lg:p-12 flex flex-col justify-between min-h-[500px] lg:min-h-[600px]"
+              style={{ background: 'linear-gradient(180deg, rgba(197,161,114,0.08) 0%, transparent 100%)' }}>
               
-              {/* Decorative Pattern */}
-              <div className="absolute inset-0 opacity-10">
-                <div className="w-full h-full" style={{
-                  backgroundImage: `radial-gradient(circle at 20% 50%, white 2px, transparent 2px), radial-gradient(circle at 80% 50%, white 2px, transparent 2px)`,
-                  backgroundSize: '40px 40px'
-                }}></div>
+              {/* Decorative Lines */}
+              <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                <motion.div
+                  className="absolute top-20 -left-20 w-40 h-[1px]"
+                  style={{ background: 'linear-gradient(90deg, transparent, rgba(197,161,114,0.5), transparent)' }}
+                  animate={{ x: [0, 100, 0], opacity: [0.3, 0.6, 0.3] }}
+                  transition={{ duration: 8, repeat: Infinity }}
+                />
+                <motion.div
+                  className="absolute bottom-32 -right-20 w-60 h-[1px]"
+                  style={{ background: 'linear-gradient(90deg, transparent, rgba(197,161,114,0.5), transparent)' }}
+                  animate={{ x: [0, -80, 0], opacity: [0.3, 0.6, 0.3] }}
+                  transition={{ duration: 10, repeat: Infinity }}
+                />
               </div>
 
-              {/* Animated Circles */}
-              <div className="absolute top-10 right-10 w-32 h-32 border-4 border-white/20 rounded-full animate-spin" style={{ animationDuration: '20s' }}></div>
-              <div className="absolute bottom-10 left-10 w-24 h-24 border-4 border-white/20 rounded-full animate-spin" style={{ animationDuration: '15s' }}></div>
-
-              <div className="relative z-10 space-y-8">
-                {/* Logo/Shield */}
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-md shadow-2xl animate-pulse" style={{ animationDuration: '3s' }}>
-                  <Shield className="w-10 h-10 text-white" />
+              {/* Logo Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="relative"
+              >
+                <div className="flex items-center gap-4">
+                  <motion.div
+                    className="relative w-16 h-16 rounded-2xl flex items-center justify-center overflow-hidden"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(197,161,114,0.2), rgba(197,161,114,0.05))',
+                      border: '1px solid rgba(197,161,114,0.2)',
+                    }}
+                    whileHover={{ scale: 1.05, rotate: 5 }}
+                    transition={{ type: 'spring', stiffness: 300 }}
+                  >
+                    <img src={shashvatLogo} alt="Logo" className="w-12 h-12 object-contain" />
+                    {/* Shine effect */}
+                    <motion.div
+                      className="absolute inset-0"
+                      style={{
+                        background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.1) 50%, transparent 60%)',
+                      }}
+                      animate={{ x: ['-100%', '200%'] }}
+                      transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
+                    />
+                  </motion.div>
+                  <div>
+                    <h2 className="text-xl font-bold text-white tracking-wide">SHASHVAT</h2>
+                    <p className="text-xs tracking-[0.3em] text-[#c5a172]">ENTERPRISE</p>
+                  </div>
                 </div>
+              </motion.div>
 
-                {/* Heading */}
+              {/* Main Heading */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="space-y-6"
+              >
                 <div>
-                  <h1 className="text-4xl lg:text-5xl font-black mb-3 animate-slideDown">
-                    Admin Portal
+                  <motion.div
+                    className="flex items-center gap-2 mb-4"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 }}
+                  >
+                    <Sparkles className="w-4 h-4 text-[#c5a172]" />
+                    <span className="text-xs tracking-widest text-[#c5a172] uppercase">Admin Portal</span>
+                  </motion.div>
+                  <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight">
+                    Welcome to
+                    <span className="block mt-2 bg-gradient-to-r from-[#c5a172] via-[#d4af37] to-[#c5a172] bg-clip-text text-transparent">
+                      Control Center
+                    </span>
                   </h1>
-                  <p className="text-xl text-white/90 font-medium animate-slideDown" style={{ animationDelay: '0.1s' }}>
-                    Shashvat Enterprise
-                  </p>
-                  <div className="flex items-center gap-2 mt-3 animate-slideDown" style={{ animationDelay: '0.2s' }}>
-                    <Sparkles className="w-5 h-5 animate-spin" style={{ animationDuration: '3s' }} />
-                    <p className="text-white/80 text-sm">Management System</p>
-                  </div>
                 </div>
+                
+                <p className="text-gray-400 text-base leading-relaxed max-w-sm">
+                  Access your dashboard to manage products, track analytics, and control your business operations.
+                </p>
 
-                {/* Divider */}
-                <div className="w-20 h-1 bg-white/40 rounded-full animate-slideDown" style={{ animationDelay: '0.3s' }}></div>
-
-                {/* Features */}
-                <div className="space-y-4 animate-slideUp" style={{ animationDelay: '0.4s' }}>
-                  <div className="flex items-center gap-3 group cursor-pointer">
-                    <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-all">
-                      <CheckCircle className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <p className="font-bold">Secure Access</p>
-                      <p className="text-sm text-white/80">SSL Encrypted</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3 group cursor-pointer">
-                    <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-all">
-                      <TrendingUp className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <p className="font-bold">Real-time Analytics</p>
-                      <p className="text-sm text-white/80">Live Visitor Tracking</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3 group cursor-pointer">
-                    <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-all">
-                      <Award className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <p className="font-bold">Professional Dashboard</p>
-                      <p className="text-sm text-white/80">Complete Control</p>
-                    </div>
-                  </div>
+                {/* Feature Pills */}
+                <div className="flex flex-wrap gap-2 pt-2">
+                  {['Secure', 'Real-time', 'Analytics'].map((tag, i) => (
+                    <motion.span
+                      key={tag}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.6 + i * 0.1 }}
+                      className="px-3 py-1.5 text-xs rounded-full border border-[#c5a172]/20 text-[#c5a172] bg-[#c5a172]/5"
+                    >
+                      {tag}
+                    </motion.span>
+                  ))}
                 </div>
+              </motion.div>
 
-                {/* Footer Info */}
-                <div className="pt-8 border-t border-white/20 animate-slideUp" style={{ animationDelay: '0.5s' }}>
-                  <p className="text-sm text-white/70">© 2025 Shashvat Enterprise</p>
-                  <p className="text-xs text-white/60 mt-1">All rights reserved</p>
-                </div>
-              </div>
+              {/* Bottom Stats */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                className="grid grid-cols-3 gap-4 pt-6 border-t border-white/5"
+              >
+                {[
+                  { value: '99.9%', label: 'Uptime' },
+                  { value: '256-bit', label: 'Encryption' },
+                  { value: '24/7', label: 'Monitoring' },
+                ].map((stat, i) => (
+                  <div key={i} className="text-center">
+                    <p className="text-lg font-semibold text-[#c5a172]">{stat.value}</p>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-wider">{stat.label}</p>
+                  </div>
+                ))}
+              </motion.div>
             </div>
 
-            {/* RIGHT SIDE - Login Form */}
-            <div className="p-8 lg:p-12 flex flex-col justify-center bg-gradient-to-br from-gray-50 to-white">
+            {/* Right Panel - Form */}
+            <div className="p-8 lg:p-12 flex flex-col justify-center bg-gradient-to-br from-white/[0.02] to-transparent">
               
-              {/* Welcome Section */}
-              <div className="mb-8 animate-slideDown">
-                <h2 className="text-3xl lg:text-4xl font-black text-gray-900 mb-2">
-                  Welcome Back!
-                </h2>
-                <p className="text-gray-600 flex items-center gap-2">
-                  <span>Sign in to access your admin dashboard</span>
-                  <ArrowRight className="w-4 h-4" style={{ color: BRAND_COLOR }} />
-                </p>
+              {/* Mobile Logo */}
+              <div className="flex lg:hidden items-center justify-center gap-3 mb-8">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center"
+                  style={{ background: 'linear-gradient(135deg, #c5a172, #8b6914)' }}>
+                  <img src={shashvatLogo} alt="Logo" className="w-8 h-8 object-contain" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-white">SHASHVAT</h2>
+                  <p className="text-[10px] tracking-widest text-[#c5a172]">ENTERPRISE</p>
+                </div>
               </div>
 
-              {/* Login Form */}
-              <form onSubmit={handleSubmit} className="space-y-5 animate-slideUp" style={{ animationDelay: '0.2s' }}>
-                {/* Email Field */}
-                <div className="group">
-                  <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
-                    <Mail className="w-4 h-4" style={{ color: BRAND_COLOR }} />
-                    Email Address
-                  </label>
+              {/* Form Header */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="mb-8"
+              >
+                <h2 className="text-2xl lg:text-3xl font-bold text-white mb-2">Sign In</h2>
+                <p className="text-gray-500 text-sm">Enter your credentials to continue</p>
+              </motion.div>
+
+              {/* Form */}
+              <motion.form
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                onSubmit={handleSubmit}
+                className="space-y-5"
+              >
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
                   <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" />
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      onFocus={() => setFocusedField('email')}
-                      onBlur={() => setFocusedField(null)}
                       placeholder="admin@shashvat.com"
-                      className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:bg-white transition-all duration-300 text-gray-900 placeholder:text-gray-400"
-                      style={{
-                        borderColor: focusedField === 'email' ? BRAND_COLOR : undefined,
-                        boxShadow: focusedField === 'email' ? `0 0 0 3px ${BRAND_COLOR}20` : undefined
-                      }}
-                      required
+                      autoComplete="email"
+                      className="w-full pl-12 pr-4 py-4 bg-[#1a1a1a] border border-[#333] rounded-xl text-white placeholder:text-gray-600 focus:outline-none focus:border-[#c5a172] focus:ring-1 focus:ring-[#c5a172]/30"
                     />
-                    {focusedField === 'email' && (
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                        <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: BRAND_COLOR }}></div>
-                      </div>
+                    {email && email.includes('@') && (
+                      <CheckCircle2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />
                     )}
                   </div>
                   {errors.email && (
-                    <p className="text-xs text-red-500 mt-1 flex items-center gap-1 animate-fadeIn">
+                    <motion.p
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-xs text-red-400 mt-2 flex items-center gap-1"
+                    >
                       <Shield className="w-3 h-3" />
                       {errors.email}
-                    </p>
+                    </motion.p>
                   )}
                 </div>
 
-                {/* Password Field */}
-                <div className="group">
-                  <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
-                    <Lock className="w-4 h-4" style={{ color: BRAND_COLOR }} />
-                    Password
-                  </label>
+                {/* Password */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
                   <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" />
                     <input
-                      type={showPassword ? "text" : "password"}
+                      type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      onFocus={() => setFocusedField('password')}
-                      onBlur={() => setFocusedField(null)}
                       placeholder="••••••••"
-                      className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:bg-white transition-all duration-300 text-gray-900 pr-12"
-                      style={{
-                        borderColor: focusedField === 'password' ? BRAND_COLOR : undefined,
-                        boxShadow: focusedField === 'password' ? `0 0 0 3px ${BRAND_COLOR}20` : undefined
-                      }}
-                      required
+                      autoComplete="current-password"
+                      className="w-full pl-12 pr-12 py-4 bg-[#1a1a1a] border border-[#333] rounded-xl text-white placeholder:text-gray-600 focus:outline-none focus:border-[#c5a172] focus:ring-1 focus:ring-[#c5a172]/30"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#c5a172]"
                     >
-                      {showPassword ? (
-                        <EyeOff className="w-5 h-5 text-gray-500" />
-                      ) : (
-                        <Eye className="w-5 h-5 text-gray-500" />
-                      )}
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
-
-                  {/* Password Strength Indicator */}
+                  
+                  {/* Password Strength - Simple version */}
                   {password && (
-                    <div className="mt-3 animate-fadeIn">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-xs font-medium text-gray-600">Password Strength</span>
-                        <span className={`text-xs font-bold ${
-                          password.length >= 8 ? 'text-green-600' :
-                          password.length >= 6 ? 'text-blue-600' :
-                          password.length >= 4 ? 'text-yellow-600' :
-                          'text-red-600'
-                        }`}>
-                          {password.length >= 8 ? 'Strong' :
-                           password.length >= 6 ? 'Good' :
-                           password.length >= 4 ? 'Fair' : 'Weak'}
-                        </span>
+                    <div className="mt-3">
+                      <div className="flex gap-1">
+                        {[1, 2, 3, 4].map((i) => (
+                          <div key={i} className="h-1 flex-1 rounded-full bg-[#222] overflow-hidden">
+                            <div
+                              className="h-full rounded-full transition-all duration-200"
+                              style={{
+                                width: password.length >= i * 2 ? '100%' : '0%',
+                                backgroundColor: password.length >= 8 ? '#22c55e' : password.length >= 6 ? '#c5a172' : '#ef4444',
+                              }}
+                            />
+                          </div>
+                        ))}
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                        <div 
-                          className={`h-full rounded-full transition-all duration-500 ${
-                            password.length >= 8 ? 'bg-green-500' :
-                            password.length >= 6 ? 'bg-blue-500' :
-                            password.length >= 4 ? 'bg-yellow-500' :
-                            'bg-red-500'
-                          }`}
-                          style={{ width: `${Math.min((password.length / 8) * 100, 100)}%` }}
-                        ></div>
-                      </div>
-                      {password.length < 6 && (
-                        <p className="text-xs text-gray-500 mt-1">
-                          Use at least 6 characters for better security
-                        </p>
-                      )}
+                      <p className="text-[10px] text-gray-500 mt-1">
+                        {password.length >= 8 ? 'Strong password' : password.length >= 6 ? 'Good password' : 'Use at least 6 characters'}
+                      </p>
                     </div>
                   )}
+                  
                   {errors.password && (
-                    <p className="text-xs text-red-500 mt-1 flex items-center gap-1 animate-fadeIn">
+                    <motion.p
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-xs text-red-400 mt-2 flex items-center gap-1"
+                    >
                       <Shield className="w-3 h-3" />
                       {errors.password}
-                    </p>
+                    </motion.p>
                   )}
                 </div>
 
-                {/* Remember Me & Forgot Password */}
-                <div className="flex items-center justify-between animate-slideUp" style={{ animationDelay: '0.3s' }}>
+                {/* Remember & Forgot */}
+                <div className="flex items-center justify-between text-sm">
                   <label className="flex items-center gap-2 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      checked={rememberMe}
-                      onChange={(e) => setRememberMe(e.target.checked)}
-                      className="w-4 h-4 rounded border-gray-300 accent-current cursor-pointer"
-                      style={{ accentColor: BRAND_COLOR }}
-                    />
-                    <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">
-                      Remember me
-                    </span>
+                    <div className="relative w-5 h-5 rounded border border-white/20 flex items-center justify-center group-hover:border-[#c5a172]/50 transition-colors">
+                      <input type="checkbox" className="sr-only peer" />
+                      <motion.div
+                        className="w-3 h-3 rounded-sm bg-[#c5a172] opacity-0 peer-checked:opacity-100"
+                        whileTap={{ scale: 0.8 }}
+                      />
+                    </div>
+                    <span className="text-gray-400 group-hover:text-gray-300 transition-colors">Remember me</span>
                   </label>
-                  <button
-                    type="button"
-                    className="text-sm font-semibold hover:underline transition-all"
-                    style={{ color: BRAND_COLOR }}
-                  >
+                  <button type="button" className="text-[#c5a172] hover:text-[#d4af37] transition-colors font-medium">
                     Forgot password?
                   </button>
                 </div>
 
                 {/* Submit Button */}
-                <button
+                <motion.button
                   type="submit"
                   disabled={isLoading || !email || password.length < 6}
-                  className="w-full py-4 rounded-xl font-bold text-white text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 animate-slideUp"
-                  style={{ 
-                    background: `linear-gradient(135deg, ${BRAND_COLOR} 0%, #d4a574 100%)`,
-                    animationDelay: '0.4s'
-                  }}
+                  className="relative w-full py-4 rounded-xl font-semibold text-black overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  {isLoading ? (
-                    <>
-                      <LogIn className="w-5 h-5 animate-spin" />
-                      Signing in...
-                    </>
-                  ) : (
-                    <>
-                      Sign In
-                      <ArrowRight className="w-5 h-5" />
-                    </>
-                  )}
-                </button>
-              </form>
+                  {/* Button Background */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#c5a172] via-[#d4af37] to-[#c5a172] bg-[length:200%_100%] group-hover:animate-shimmer" />
+                  
+                  {/* Button Shine */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12"
+                    initial={{ x: '-100%' }}
+                    whileHover={{ x: '100%' }}
+                    transition={{ duration: 0.6 }}
+                  />
+                  
+                  {/* Button Content */}
+                  <span className="relative flex items-center justify-center gap-2">
+                    {isLoading ? (
+                      <motion.div
+                        className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                      />
+                    ) : (
+                      <>
+                        Sign In
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </>
+                    )}
+                  </span>
+                </motion.button>
+              </motion.form>
 
-              {/* Footer */}
-              <div className="mt-8 pt-6 border-t border-gray-200 animate-slideUp" style={{ animationDelay: '0.5s' }}>
-                <p className="text-center text-xs text-gray-500">
-                  Protected by enterprise-grade security
-                </p>
-                <div className="flex items-center justify-center gap-4 mt-3">
+              {/* Security Badge */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                className="mt-8 pt-6 border-t border-white/5"
+              >
+                <div className="flex items-center justify-center gap-6 text-gray-500">
                   <div className="flex items-center gap-1.5">
-                    <Shield className="w-3.5 h-3.5 text-gray-400" />
-                    <span className="text-xs text-gray-500">SSL Encrypted</span>
+                    <Shield className="w-4 h-4 text-[#c5a172]" />
+                    <span className="text-xs">SSL Secured</span>
                   </div>
-                  <div className="w-1 h-1 rounded-full bg-gray-300"></div>
+                  <div className="w-1 h-1 rounded-full bg-gray-700" />
                   <div className="flex items-center gap-1.5">
-                    <Lock className="w-3.5 h-3.5 text-gray-400" />
-                    <span className="text-xs text-gray-500">Secure Access</span>
+                    <Lock className="w-4 h-4 text-[#c5a172]" />
+                    <span className="text-xs">Encrypted</span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
+
+      {/* CSS for shimmer animation */}
+      <style>{`
+        @keyframes shimmer {
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+        .animate-shimmer {
+          animation: shimmer 3s linear infinite;
+        }
+      `}</style>
     </div>
   );
 };
